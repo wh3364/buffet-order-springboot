@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fch.buffetorder.mapper.UserMapper">
+
+    <!--根据openId插入用户-->
+    <insert id="addUser" parameterType="User" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
+        INSERT
+        INTO user(open_id, nick_name, avatar_path)
+        VALUES (#{openId}, #{nickName}, #{avatarPath})
+    </insert>
+
+    <!--更新用户昵称-->
+    <update id="uploadUserNick" parameterType="User" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
+        UPDATE user
+        SET nick_name = #{nickName}
+        WHERE open_id = #{openId}
+    </update>
+
+    <!--更新用户头像-->
+    <update id="uploadUserAvatar" parameterType="User" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
+        UPDATE user
+        SET avatar_path = #{avatarPath}
+        WHERE open_id = #{openId}
+    </update>
+
+    <!--    -->
+    <update id="uploadUserPay" parameterType="User" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
+        UPDATE user
+        SET money = #{money}
+        WHERE open_id = #{openId}
+    </update>
+
+    <!--根据openId查询用户信息-->
+    <select id="queryUserByOpenId" parameterType="User" resultType="User">
+        SELECT user_id,
+               open_id,
+               nick_name,
+               avatar_path,
+               is_enable,
+               money
+        FROM user
+        WHERE open_id = #{openId} AND is_enable = 1
+    </select>
+    <!--根据openId查询用户信息-->
+    <select id="queryUserIdByOpenId" parameterType="User" resultType="User">
+        SELECT user_id
+        FROM user
+        WHERE open_id = #{openId} AND is_enable = 1
+    </select>
+</mapper>
