@@ -15,6 +15,8 @@ import com.fch.buffetorder.mapper.OrderMapper;
 import com.fch.buffetorder.mapper.UserMapper;
 import com.fch.buffetorder.service.OrderService;
 import com.fch.buffetorder.util.JsonUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -75,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
                     finalPrice = finalPrice.add(radioDetails.get(i).getRS().get(item.getR().get(i).getS()).getV());
                     sb.append(radioDetails.get(i).getRS().get(item.getR().get(i).getS()).getN()).append(" ");
                 }
-            } else if (item.getHD() == 0){
+            } else if (item.getHD() == 0) {
                 if (item.getNumb() == 0)
                     continue;
                 finalPrice = finalPrice.multiply(BigDecimal.valueOf(item.getNumb()));
@@ -117,14 +120,44 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> queryOrderListByUserId(User user) {
-        List<Order> orderList = orderMapper.queryOrderListByUserId(user);
+    public List<Order> queryOrderListById(Order order) {
+        List<Order> orderList = orderMapper.queryOrderListById(order);
         List<Order> resOrderList = new ArrayList<>();
-        for (Order order : orderList) {
-            order.setOrderJsonBody(orderJsonBbToOrderRepJson(order.getOrderJsonBody()));
-            resOrderList.add(order);
+        for (Order o : orderList) {
+            o.setOrderJsonBody(orderJsonBbToOrderRepJson(o.getOrderJsonBody()));
+            resOrderList.add(o);
         }
         return resOrderList;
+    }
+
+    @Override
+    public PageInfo<Order> userQueryOrderListById(Order order, Integer pageNum, Integer pageSize) {
+        List<Order> orderList = null;
+        switch (order.getOrderState()) {
+            case 0:
+                PageHelper.startPage(pageNum, pageSize);
+                orderList = orderMapper.userQueryOrderListDoingById(order);
+                for (Order o : orderList) {
+                    o.setOrderJsonBody(orderJsonBbToOrderRepJson(o.getOrderJsonBody()));
+                }
+                break;
+            case 3:
+                PageHelper.startPage(pageNum, pageSize);
+                orderList = orderMapper.userQueryOrderListCompleteOrCancelById(order);
+                for (Order o : orderList) {
+                    o.setOrderJsonBody(orderJsonBbToOrderRepJson(o.getOrderJsonBody()));
+                }
+                break;
+            case 4:
+                PageHelper.startPage(pageNum, pageSize);
+                orderList = orderMapper.userQueryOrderListCompleteOrCancelById(order);
+                for (Order o : orderList) {
+                    o.setOrderJsonBody(orderJsonBbToOrderRepJson(o.getOrderJsonBody()));
+                }
+                break;
+        }
+        //resOrderList.sort((l1, l2) -> l2.getOrderCreateTime().compareTo(l1.getOrderCreateTime()));
+        return new PageInfo<>(orderList);
     }
 
     @Override
@@ -137,14 +170,14 @@ public class OrderServiceImpl implements OrderService {
             res.put("msg", "订单不存在");
             return res;
         }
-        if (order.getOrderState() != 0){
+        if (order.getOrderState() != 0) {
             res.put("msg", "订单已付款或取消");
             return res;
         }
         user = userMapper.queryUserByOpenId(user);
         BigDecimal money = user.getMoney();
         BigDecimal shouldPay = order.getOrderShouldPay();
-        if (money.compareTo(shouldPay) < 0 || money.compareTo(shouldPay) == 0){
+        if (money.compareTo(shouldPay) < 0 || money.compareTo(shouldPay) == 0) {
             res.put("msg", "余额不足");
             return res;
         }
@@ -153,7 +186,7 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderState(1);
         order.setOrderRealPay(shouldPay);
-        if (orderMapper.uploadOrderPay(order) + userMapper.uploadUserPay(user) > 1){
+        if (orderMapper.uploadOrderPay(order) + userMapper.uploadUserPay(user) > 1) {
             res.put("code", 1);
             res.put("msg", "支付成功");
             log.info("支付成功 钱{}￥ - 应付{}￥", money, shouldPay);

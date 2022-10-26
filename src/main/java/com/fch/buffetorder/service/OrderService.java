@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.Order;
 import com.fch.buffetorder.entity.orderbody.OrderBody;
 import com.fch.buffetorder.entity.User;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -19,7 +20,10 @@ public interface OrderService {
 
     Order queryOrderById(Order order);
 
-    List<Order> queryOrderListByUserId(User user);
+    List<Order> queryOrderListById(Order order);
+
+    PageInfo<Order> userQueryOrderListById(Order order, Integer pageNum, Integer pageSize);
 
     JSONObject payOrder(Order order, User user);
+
 }

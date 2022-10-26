@@ -1,7 +1,6 @@
 package com.fch.buffetorder.mapper;
 
 import com.fch.buffetorder.entity.Order;
-import com.fch.buffetorder.entity.User;
 
 import java.util.List;
 
@@ -18,6 +17,9 @@ public interface OrderMapper {
 
     Order queryOrderById(Order order);
 
-    List<Order> queryOrderListByUserId(User user);
+    List<Order> queryOrderListById(Order order);
 
+    List<Order> userQueryOrderListDoingById(Order order);
+
+    List<Order> userQueryOrderListCompleteOrCancelById(Order order);
 }

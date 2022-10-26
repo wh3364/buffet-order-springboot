@@ -14,9 +14,10 @@
     <!--        -->
     <update id="uploadOrderPay" parameterType="Order" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
         UPDATE `order`
-        SET order_state = #{orderState},
+        SET order_state    = #{orderState},
             order_real_pay = #{orderRealPay}
-        WHERE order_id = #{orderId} AND user_id = #{userId}
+        WHERE order_id = #{orderId}
+          AND user_id = #{userId}
     </update>
 
 
@@ -37,7 +38,20 @@
           AND user_id = #{userId}
     </select>
 
-    <select id="queryOrderListByUserId" parameterType="User" resultType="Order">
+    <select id="queryOrderListById" parameterType="Order" resultType="Order">
+        SELECT order_id,
+        order_create_time,
+        order_json_body,
+        order_state,
+        order_should_pay
+        FROM `order`
+        WHERE user_id = #{userId}
+        <if test="orderState != null">
+            AND order_state = #{orderState}
+        </if>
+    </select>
+
+    <select id="userQueryOrderListDoingById" parameterType="Order" resultType="Order">
         SELECT order_id,
                order_create_time,
                order_json_body,
@@ -45,6 +59,22 @@
                order_should_pay
         FROM `order`
         WHERE user_id = #{userId}
+            AND order_state = 0
+           OR 1
+           OR 2
+        ORDER BY order_create_time DESC
+    </select>
+
+    <select id="userQueryOrderListCompleteOrCancelById" parameterType="Order" resultType="Order">
+        SELECT order_id,
+               order_create_time,
+               order_json_body,
+               order_state,
+               order_should_pay
+        FROM `order`
+        WHERE user_id = #{userId}
+          AND order_state = #{orderState}
+        ORDER BY order_create_time DESC
     </select>
 
 </mapper>

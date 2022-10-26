@@ -7,6 +7,7 @@ import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.service.OrderService;
 import com.fch.buffetorder.service.UserService;
 import com.fch.buffetorder.util.JsonUtil;
+import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -87,18 +88,30 @@ public class OrderController {
     }
 
     @PostMapping("GetOrderList")
-    public ResponseEntity getOrderMiniList(@RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey) {
-        if (jsonUtil.needReg(openId)) {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
+    public ResponseEntity getOrderMiniList(@RequestBody String json,
+                                           @RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey,
+                                           @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                           @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        if (jsonObject.size() > 0) {
+            if (jsonUtil.needReg(openId)) {
+                return new ResponseEntity(HttpStatus.FORBIDDEN);
+            }
+            Integer orderState = jsonObject.getInteger("orderState");
+            User user = new User();
+            user.setOpenId(openId);
+            user = userService.queryUserIdByOpenId(user);
+            Order order = new Order();
+            order.setOrderState(orderState);
+            order.setUserId(user.getUserId());
+            PageInfo orders = orderService.userQueryOrderListById(order, pageNum, pageSize);
+            JSONObject resp = new JSONObject();
+            resp.put("orders", orders);
+            resp.put("session_key", sessionKey);
+            log.info("查询订单列表");
+            return new ResponseEntity(resp, HttpStatus.OK);
         }
-        User user = new User();
-        user.setOpenId(openId);
-        user = userService.queryUserIdByOpenId(user);
-        List<Order> orders = orderService.queryOrderListByUserId(user);
-        JSONObject resp = new JSONObject();
-        resp.put("orders", orders);
-        resp.put("session_key", sessionKey);
-        return new ResponseEntity(resp, HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("PayOrder")
