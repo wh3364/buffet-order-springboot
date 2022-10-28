@@ -3,9 +3,9 @@ package com.fch.buffetorder.service.impl;
 import com.fch.buffetorder.entity.Cate;
 import com.fch.buffetorder.mapper.CateMapper;
 import com.fch.buffetorder.service.CateService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 public class CateServiceImpl implements CateService {
 
-    @Resource
+    @Autowired
     CateMapper cateMapper;
     /**
      * 查询所有食物分类

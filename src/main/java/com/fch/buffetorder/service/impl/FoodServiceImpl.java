@@ -3,9 +3,9 @@ package com.fch.buffetorder.service.impl;
 import com.fch.buffetorder.entity.Food;
 import com.fch.buffetorder.mapper.FoodMapper;
 import com.fch.buffetorder.service.FoodService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 public class FoodServiceImpl implements FoodService {
 
-    @Resource
+    @Autowired
     FoodMapper foodMapper;
 
     @Override

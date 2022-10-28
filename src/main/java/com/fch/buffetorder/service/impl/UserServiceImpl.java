@@ -3,9 +3,9 @@ package com.fch.buffetorder.service.impl;
 import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.mapper.UserMapper;
 import com.fch.buffetorder.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 
 /**
  * @program: BuffetOrder
@@ -16,7 +16,7 @@ import javax.annotation.Resource;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Resource
+    @Autowired
     UserMapper userMapper;
 
     /**
