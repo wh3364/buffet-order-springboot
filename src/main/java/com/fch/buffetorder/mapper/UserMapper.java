@@ -2,6 +2,7 @@ package com.fch.buffetorder.mapper;
 
 import com.fch.buffetorder.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * @program: BuffetOrder
@@ -10,6 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @create: 2022-10-14 22:39
  **/
 @Mapper
+@Repository
 public interface UserMapper {
     /**
      * 添加用户

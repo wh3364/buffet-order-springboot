@@ -2,6 +2,7 @@ package com.fch.buffetorder.mapper;
 
 import com.fch.buffetorder.entity.Food;
 import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @create: 2022-10-16 23:07
  **/
 @Mapper
+@Repository
 public interface FoodMapper {
     List<Food> queryAllFoods();
 
