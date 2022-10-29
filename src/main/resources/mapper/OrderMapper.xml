@@ -20,8 +20,16 @@
           AND user_id = #{userId}
     </update>
 
+    <!--        -->
+    <update id="uploadOrderGoFood" parameterType="Order" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
+        UPDATE `order`
+        SET order_state    = #{orderState}
+        WHERE order_id = #{orderId}
+          AND user_id = #{userId}
+    </update>
 
-    <select id="queryOrderById" parameterType="Order" resultType="Order">
+
+    <select id="queryOrderByOrderIdAndUserId" parameterType="Order" resultType="Order">
         SELECT order_id,
                user_id,
                order_way,
@@ -74,6 +82,26 @@
         FROM `order`
         WHERE user_id = #{userId}
           AND order_state = #{orderState}
+        ORDER BY order_create_time DESC
+    </select>
+
+    <select id="adminQueryOrdersByWayAndState" parameterType="Order" resultType="Order">
+        SELECT order_id,
+               user_id,
+               order_way,
+               order_address,
+               order_create_time,
+               order_json_body,
+               order_get_numb,
+               order_state,
+               order_note,
+               order_should_pay,
+               order_real_pay
+        FROM `order`
+        WHERE order_way = #{orderWay}
+            AND order_state = 0
+           OR 1
+           OR 2
         ORDER BY order_create_time DESC
     </select>
 

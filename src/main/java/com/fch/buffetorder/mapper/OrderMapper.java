@@ -19,11 +19,15 @@ public interface OrderMapper {
 
     int uploadOrderPay(Order order);
 
-    Order queryOrderById(Order order);
+    int uploadOrderGoFood(Order order);
+
+    Order queryOrderByOrderIdAndUserId(Order order);
 
     List<Order> queryOrderListById(Order order);
 
     List<Order> userQueryOrderListDoingById(Order order);
 
     List<Order> userQueryOrderListCompleteOrCancelById(Order order);
+
+    List<Order> adminQueryOrdersByWayAndState(Order order);
 }

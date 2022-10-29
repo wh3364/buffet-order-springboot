@@ -77,7 +77,7 @@ public class OrderController {
             Integer orderId = jsonObject.getInteger("orderId");
             order.setOrderId(orderId);
             order.setUserId(user.getUserId());
-            order = orderService.queryOrderById(order);
+            order = orderService.queryOrderByOrderIdAndUserId(order);
             JSONObject resp = new JSONObject();
             resp.put("order", order);
             resp.put("session_key", sessionKey);

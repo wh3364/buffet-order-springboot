@@ -111,8 +111,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order queryOrderById(Order order) {
-        order = orderMapper.queryOrderById(order);
+    public Order queryOrderByOrderIdAndUserId(Order order) {
+        order = orderMapper.queryOrderByOrderIdAndUserId(order);
         order.setOrderJsonBody(orderJsonBbToOrderRepJson(order.getOrderJsonBody()));
         return order;
     }
@@ -163,7 +163,7 @@ public class OrderServiceImpl implements OrderService {
         JSONObject res = new JSONObject();
         res.put("code", 0);
         res.put("msg", "支付失败");
-        order = orderMapper.queryOrderById(order);
+        order = orderMapper.queryOrderByOrderIdAndUserId(order);
         if (order == null) {
             res.put("msg", "订单不存在");
             return res;
@@ -188,6 +188,46 @@ public class OrderServiceImpl implements OrderService {
             res.put("code", 1);
             res.put("msg", "支付成功");
             log.info("支付成功 钱{}￥ - 应付{}￥", money, shouldPay);
+        }
+        return res;
+    }
+
+    @Override
+    public PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<Order> orders = orderMapper.adminQueryOrdersByWayAndState(order);
+        return new PageInfo<>(orders);
+    }
+
+    @Override
+    public JSONObject goFood(Order order) {
+        JSONObject res = new JSONObject();
+        res.put("code", 0);
+        res.put("msg", "出餐失败");
+        order = orderMapper.queryOrderByOrderIdAndUserId(order);
+        if (order == null){
+            res.put("code", 0);
+            res.put("msg", "订单不存在");
+            return res;
+        }
+        if (order.getOrderState() == 2 || order.getOrderState() == 3){
+            res.put("code", 0);
+            res.put("msg", "订单已出餐或完成");
+        }
+        if (order.getOrderState() == 4){
+            res.put("code", 0);
+            res.put("msg", "订单已取消");
+        }
+        if (order.getOrderState() == 0){
+            res.put("code", 0);
+            res.put("msg", "订单未付款");
+        }
+        if (order.getOrderState() == 1){
+            order.setOrderState(2);
+            if (orderMapper.uploadOrderGoFood(order) > 0){
+                res.put("code", 1);
+                res.put("msg", "成功出餐");
+            }
         }
         return res;
     }

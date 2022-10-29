@@ -18,7 +18,7 @@ public interface OrderService {
 
     Order getOrder(List<OrderBody> orders, Integer way, User user);
 
-    Order queryOrderById(Order order);
+    Order queryOrderByOrderIdAndUserId(Order order);
 
     List<Order> queryOrderListById(Order order);
 
@@ -26,4 +26,7 @@ public interface OrderService {
 
     JSONObject payOrder(Order order, User user);
 
+    PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Integer pageNum, Integer pageSize);
+
+    JSONObject goFood(Order order);
 }
