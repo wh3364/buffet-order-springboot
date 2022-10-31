@@ -37,7 +37,7 @@ public class LoginController {
     private JsonUtil jsonUtil;
 
     @PostMapping("RegUser")
-    public ResponseEntity regUser(@RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey) {
+    public ResponseEntity regUser(@RequestAttribute("openId") String openId) {
         if (StringUtils.hasText(openId)) {
             User user = new User();
             user.setOpenId(openId);
@@ -47,7 +47,6 @@ public class LoginController {
             user.setOpenId(null);
             JSONObject resp = new JSONObject();
             resp.put("user", user);
-            resp.put("session_key", sessionKey);
             log.info("注册用户{}", user);
             return new ResponseEntity(resp, HttpStatus.OK);
         }
@@ -55,7 +54,7 @@ public class LoginController {
     }
 
     @PostMapping("LoginUser")
-    public ResponseEntity loginUser(@RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey) {
+    public ResponseEntity loginUser(@RequestAttribute("openId") String openId) {
         if (StringUtils.hasText(openId)) {
             if (jsonUtil.needReg(openId)) {
                 return new ResponseEntity(HttpStatus.FORBIDDEN);
@@ -66,7 +65,6 @@ public class LoginController {
             JSONObject resp = new JSONObject();
             user.setOpenId(null);
             resp.put("user", user);
-            resp.put("session_key", sessionKey);
             log.info("登录用户{}", user);
             return new ResponseEntity(resp, HttpStatus.OK);
 

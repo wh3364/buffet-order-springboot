@@ -39,8 +39,8 @@ public class OrderController {
 
 
     @PostMapping("Create")
-    public ResponseEntity createOrder(@RequestBody() String json
-            , @RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey) {
+    public ResponseEntity createOrder(@RequestBody() String json,
+                                      @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (jsonObject.size() > 0) {
             if (jsonUtil.needReg(openId)) {
@@ -49,13 +49,10 @@ public class OrderController {
             User user = new User();
             user.setOpenId(openId);
             List<OrderBody> orders = jsonUtil.reqParamJsonToOrderBody(jsonObject.getJSONObject("data"));
-            Order order = orderService.getOrder(orders, jsonObject.getJSONObject("data").getInteger("way"), user);
-            if (order == null) {
+            JSONObject resp = orderService.userCreateOrder(orders, jsonObject.getJSONObject("data").getInteger("way"), user);
+            if (resp.getInteger("code") == 0) {
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
-            JSONObject resp = new JSONObject();
-            resp.put("order", order);
-            resp.put("session_key", sessionKey);
             log.info("创建订单");
             return new ResponseEntity(resp, HttpStatus.OK);
         }
@@ -63,8 +60,8 @@ public class OrderController {
     }
 
     @PostMapping("GetOrder")
-    public ResponseEntity getOrder(@RequestBody String json
-            , @RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey) {
+    public ResponseEntity getOrder(@RequestBody String json,
+                                   @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (jsonObject.size() > 0) {
             if (jsonUtil.needReg(openId)) {
@@ -80,7 +77,6 @@ public class OrderController {
             order = orderService.queryOrderByOrderIdAndUserId(order);
             JSONObject resp = new JSONObject();
             resp.put("order", order);
-            resp.put("session_key", sessionKey);
             log.info("查询订单");
             return new ResponseEntity(resp, HttpStatus.OK);
         }
@@ -89,7 +85,7 @@ public class OrderController {
 
     @PostMapping("GetOrderList")
     public ResponseEntity getOrderMiniList(@RequestBody String json,
-                                           @RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey,
+                                           @RequestAttribute("openId") String openId,
                                            @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
                                            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
         JSONObject jsonObject = JSONObject.parseObject(json);
@@ -107,7 +103,6 @@ public class OrderController {
             PageInfo orders = orderService.userQueryOrderListById(order, pageNum, pageSize);
             JSONObject resp = new JSONObject();
             resp.put("orders", orders);
-            resp.put("session_key", sessionKey);
             log.info("查询订单列表");
             return new ResponseEntity(resp, HttpStatus.OK);
         }
@@ -115,8 +110,8 @@ public class OrderController {
     }
 
     @PostMapping("PayOrder")
-    public ResponseEntity payOrder(@RequestBody String json
-            , @RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey) {
+    public ResponseEntity payOrder(@RequestBody String json,
+                                   @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (jsonObject.size() > 0) {
             if (jsonUtil.needReg(openId)) {
@@ -130,7 +125,6 @@ public class OrderController {
             order.setUserId(user.getUserId());
             order.setOrderId(jsonObject.getInteger("openId"));
             JSONObject resp = orderService.payOrder(order, user);
-            resp.put("session_key", sessionKey);
             log.info("支付订单");
             return new ResponseEntity(resp, HttpStatus.OK);
         }

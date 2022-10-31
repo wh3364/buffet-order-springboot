@@ -35,7 +35,8 @@ public class LoginInterceptor implements HandlerInterceptor {
             String openId = openIdUtil.getOpenIdFromSession(session_key);
             if (StringUtils.hasText(openId)) {
                 request.setAttribute("openId", openId);
-                request.setAttribute("session_key", session_key);
+                //request.setAttribute("session_key", session_key);
+                response.setHeader("session_key", session_key);
                 log.info("通过session_key登录");
                 return true;
             } else {
@@ -49,7 +50,8 @@ public class LoginInterceptor implements HandlerInterceptor {
             log.info("code:{}", code);
             if (openIdres.getBoolean("flag")) {
                 request.setAttribute("openId", openIdres.getString("openId"));
-                request.setAttribute("session_key", openIdres.getString("session_key"));
+                //request.setAttribute("session_key", openIdres.getString("session_key"));
+                response.setHeader("session_key", openIdres.getString("session_key"));
                 log.info("通过code登录");
                 return true;
             } else {
@@ -69,7 +71,6 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         //log.info("执行了postHandle（）");
-
     }
 
     @Override

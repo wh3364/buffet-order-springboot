@@ -1,6 +1,7 @@
 package com.fch.buffetorder.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.entity.Address;
 import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.service.UserService;
 import com.fch.buffetorder.util.JsonUtil;
@@ -54,9 +55,47 @@ public class UserController {
 //        return new ResponseEntity(HttpStatus.BAD_REQUEST);
 //    }
 
+
+    @GetMapping("GetAddress")
+    public ResponseEntity addOrUploadAddress(@RequestAttribute("openId") String openId) {
+        if (jsonUtil.needReg(openId)) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
+        }
+        User user = new User();
+        user.setOpenId(openId);
+        Address address = userService.getAddressByUserId(user);
+        JSONObject resp = new JSONObject();
+        resp.put("address", address);
+        log.info("查询地址{}", address);
+        return new ResponseEntity(resp, HttpStatus.OK);
+    }
+
+    @PostMapping("AddOrUploadAddress")
+    public ResponseEntity addOrUploadAddress(@RequestBody() String json,
+                                             @RequestAttribute("openId") String openId) {
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        if (StringUtils.hasText(jsonObject.getString("address"))) {
+            if (jsonUtil.needReg(openId)) {
+                return new ResponseEntity(HttpStatus.FORBIDDEN);
+            }
+            User user = new User();
+            user.setOpenId(openId);
+            Address address = new Address();
+            address.setAddress(jsonObject.getString("address"));
+            userService.addOrUploadAddress(user, address);
+            user.setOpenId(null);
+            JSONObject resp = new JSONObject();
+            resp.put("user", user);
+            log.info("添加或修改地址{}", user);
+            return new ResponseEntity(resp, HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+
     @PostMapping("UploadAvatar")
-    public ResponseEntity uploadAvatar(@RequestParam("File") MultipartFile file
-            , @RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey, HttpServletRequest request) {
+    public ResponseEntity uploadAvatar(@RequestParam("File") MultipartFile file,
+                                       @RequestAttribute("openId") String openId,
+                                       HttpServletRequest request) {
         if (!file.isEmpty()) {
             if (jsonUtil.needReg(openId)) {
                 return new ResponseEntity(HttpStatus.FORBIDDEN);
@@ -76,15 +115,14 @@ public class UserController {
             user.setOpenId(null);
             JSONObject resp = new JSONObject();
             resp.put("user", user);
-            resp.put("session_key", sessionKey);
             return new ResponseEntity(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("UploadNick")
-    public ResponseEntity uploadNick(@RequestBody() String json
-            , @RequestAttribute("openId") String openId, @RequestAttribute("session_key") String sessionKey) {
+    public ResponseEntity uploadNick(@RequestBody() String json,
+                                     @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (StringUtils.hasText(jsonObject.getString("nick"))) {
             if (jsonUtil.needReg(openId)) {
@@ -97,7 +135,6 @@ public class UserController {
             user.setOpenId(null);
             JSONObject resp = new JSONObject();
             resp.put("user", user);
-            resp.put("session_key", sessionKey);
             log.info("更新姓名{}", user);
             return new ResponseEntity(resp, HttpStatus.OK);
         }
