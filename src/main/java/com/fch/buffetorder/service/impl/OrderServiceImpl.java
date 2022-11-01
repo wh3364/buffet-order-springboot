@@ -2,14 +2,12 @@ package com.fch.buffetorder.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fch.buffetorder.entity.Food;
-import com.fch.buffetorder.entity.Order;
-import com.fch.buffetorder.entity.OrderJsonInDb;
+import com.fch.buffetorder.entity.*;
 import com.fch.buffetorder.entity.detail.MultiDetail;
 import com.fch.buffetorder.entity.detail.RadioDetail;
 import com.fch.buffetorder.entity.orderbody.DM;
 import com.fch.buffetorder.entity.orderbody.OrderBody;
-import com.fch.buffetorder.entity.User;
+import com.fch.buffetorder.mapper.AddressMapper;
 import com.fch.buffetorder.mapper.FoodMapper;
 import com.fch.buffetorder.mapper.OrderMapper;
 import com.fch.buffetorder.mapper.UserMapper;
@@ -47,10 +45,15 @@ public class OrderServiceImpl implements OrderService {
     FoodMapper foodMapper;
 
     @Autowired
+    AddressMapper addressMapper;
+
+    @Autowired
     JsonUtil jsonUtil;
 
     @Override
-    public Order getOrder(List<OrderBody> orderBodyList, Integer way, User user) {
+    public JSONObject userCreateOrder(List<OrderBody> orderBodyList, Integer way, User user) {
+        JSONObject res = new JSONObject();
+        res.put("code", 0);
         user = userMapper.queryUserIdByOpenId(user);
         Order order = new Order();
         List<OrderJsonInDb> orderJsonInDbList = new ArrayList<>();
@@ -87,27 +90,36 @@ public class OrderServiceImpl implements OrderService {
             sum = sum.add(finalPrice);
         }
         if (orderJsonInDbList.size() == 0) {
-            return null;
+            return res;
+        }
+        if (way == 0){
+            order.setOrderGetNumb(1);
+        }
+        else if (way == 1) {
+            Address address = new Address();
+            address.setUserId(user.getUserId());
+            address = addressMapper.queryAddressByUserId(address);
+            if (address == null) {
+                res.put("code", 2);
+                res.put("msg", "请在个人中心添加地址");
+                return res;
+            }
+            order.setOrderAddress(address.getAddress());
         }
         log.info("订单:{}", orderJsonInDbList);
         log.info("订单Json:{}", JSONObject.toJSONString(orderJsonInDbList));
         order.setUserId(user.getUserId());
         order.setOrderWay(way);
-        order.setOrderAddress("地址");
         order.setOrderCreateTime(new Date());
-
         order.setOrderJsonBody(JSONObject.toJSONString(orderJsonInDbList));
-
-        order.setOrderGetNumb(1);
         order.setOrderState(0);
         order.setOrderNote("无");
         order.setOrderShouldPay(sum);
-
         if (orderMapper.createOrder(order) > 0) {
-            return order;
-
+            res.put("order", order);
+            res.put("code", 1);
         }
-        return null;
+        return res;
     }
 
     @Override
@@ -193,9 +205,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Integer pageNum, Integer pageSize) {
-        PageHelper.startPage(pageNum, pageSize);
-        List<Order> orders = orderMapper.adminQueryOrdersByWayAndState(order);
+    public PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Date[] createTime, Integer pageNum, Integer pageSize) {
+        List<Order> orders;
+        Date startDate = createTime[0];
+        Date endDate = createTime[1];
+        Integer orderStatus = order.getOrderState();
+        Integer orderWay = order.getOrderWay();
+        // 默认 查询 0 1 2
+        if (orderStatus == -1){
+            PageHelper.startPage(pageNum, pageSize);
+            orders = orderMapper.adminQueryOrdersByWayAndStateDefault(orderWay, startDate, endDate);
+        }else {
+            PageHelper.startPage(pageNum, pageSize);
+            orders = orderMapper.adminQueryOrdersByWayAndState(orderStatus, orderWay, startDate, endDate);
+        }
         return new PageInfo<>(orders);
     }
 

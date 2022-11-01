@@ -2,8 +2,10 @@ package com.fch.buffetorder.mapper;
 
 import com.fch.buffetorder.entity.Order;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,5 +31,12 @@ public interface OrderMapper {
 
     List<Order> userQueryOrderListCompleteOrCancelById(Order order);
 
-    List<Order> adminQueryOrdersByWayAndState(Order order);
+    List<Order> adminQueryOrdersByWayAndStateDefault(@Param("orderWay") Integer orderWay,
+                                                     @Param("startDate") Date startDate,
+                                                     @Param("endDate") Date endDate);
+
+    List<Order> adminQueryOrdersByWayAndState(@Param("orderState") Integer orderState,
+                                              @Param("orderWay") Integer orderWay,
+                                              @Param("startDate") Date startDate,
+                                              @Param("endDate") Date endDate);
 }

@@ -6,6 +6,7 @@ import com.fch.buffetorder.entity.orderbody.OrderBody;
 import com.fch.buffetorder.entity.User;
 import com.github.pagehelper.PageInfo;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ import java.util.List;
  **/
 public interface OrderService {
 
-    Order getOrder(List<OrderBody> orders, Integer way, User user);
+    JSONObject userCreateOrder(List<OrderBody> orders, Integer way, User user);
 
     Order queryOrderByOrderIdAndUserId(Order order);
 
@@ -26,7 +27,7 @@ public interface OrderService {
 
     JSONObject payOrder(Order order, User user);
 
-    PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Integer pageNum, Integer pageSize);
+    PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Date[] createTime, Integer pageNum, Integer pageSize);
 
     JSONObject goFood(Order order);
 }
