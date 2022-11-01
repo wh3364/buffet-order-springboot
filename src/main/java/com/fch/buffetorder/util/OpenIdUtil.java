@@ -29,7 +29,7 @@ public class OpenIdUtil {
 
 
     public JSONObject getOpenId(String code) {
-        String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + weiXinParam.APP_ID + "&secret=" + weiXinParam.APP_SECRET + "&js_code=" + code + "&grant_type=" + weiXinParam.GRANT_TYPE;
+        String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + weiXinParam.getAPP_ID() + "&secret=" + weiXinParam.getAPP_SECRET() + "&js_code=" + code + "&grant_type=" + weiXinParam.getGRANT_TYPE();
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
         JSONObject res = new JSONObject();
         if (responseEntity.getStatusCodeValue() <= 200) {

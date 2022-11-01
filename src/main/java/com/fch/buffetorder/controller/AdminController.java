@@ -25,7 +25,7 @@ import java.util.Date;
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping("Admin")
+@RequestMapping("Assistant")
 public class AdminController {
 
     @Autowired

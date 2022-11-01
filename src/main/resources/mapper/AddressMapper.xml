@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fch.buffetorder.mapper.AddressMapper">
+
+    <!--   -->
+    <insert id="addAddress" parameterType="Address"  useGeneratedKeys="true" keyColumn="address_id" keyProperty="addressId">
+        INSERT
+        INTO address(user_id, address)
+        VALUES (#{userId}, #{address})
+    </insert>
+
+    <!--   -->
+    <update id="uploadAddress"  parameterType="Address"  useGeneratedKeys="true" keyColumn="address_id" keyProperty="addressId">
+        UPDATE address
+        SET address = #{address}
+        WHERE user_id = #{userId}
+    </update>
+
+    <!--   -->
+    <select id="queryAddressByUserId" parameterType="Address" resultType="Address">
+        SELECT address_id,
+               user_id,
+               address
+        FROM address
+        WHERE user_id = #{userId}
+    </select>
+</mapper>

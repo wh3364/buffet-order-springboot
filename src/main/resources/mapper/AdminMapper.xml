@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fch.buffetorder.mapper.AdminMapper">
+
+    <!--   -->
+    <insert id="insertAdmin" parameterType="Admin" useGeneratedKeys="true" keyColumn="admin_id" keyProperty="adminId">
+        INSERT
+        INTO admin(username, password, role)
+        VALUES (#{username}, #{password}, #{role})
+    </insert>
+
+    <!--   -->
+    <!--<update id="uploadAddress"  parameterType="Address"  useGeneratedKeys="true" keyColumn="address_id" keyProperty="addressId">-->
+        <!--UPDATE address-->
+        <!--SET address = #{address}-->
+        <!--WHERE user_id = #{userId}-->
+    <!--</update>-->
+
+    <!--   -->
+    <select id="queryAdminByUsername" parameterType="Admin" resultType="Admin">
+        SELECT admin_id,
+               username,
+               password,
+               role,
+               is_enable
+        FROM admin
+        WHERE username = #{username}
+    </select>
+
+    <select id="findAdminByUsername" parameterType="String" resultType="Admin">
+        SELECT admin_id,
+               username,
+               password,
+               role,
+               is_enable
+        FROM admin
+        WHERE username = #{username}
+    </select>
+</mapper>

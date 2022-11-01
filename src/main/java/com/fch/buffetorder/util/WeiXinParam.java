@@ -1,6 +1,7 @@
 package com.fch.buffetorder.util;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,17 +10,15 @@ import org.springframework.stereotype.Component;
  * @CreatedBy: fch
  * @create: 2022-10-14 15:42
  **/
+@Data
 @Component
+@ConfigurationProperties(prefix = "weixin")
 public class WeiXinParam {
-    @Value("${weiXin.app-id}")
-    public String APP_ID;
+    private String APP_ID;
 
-    @Value("${weiXin.app-secret}")
-    public String APP_SECRET;
+    private String APP_SECRET;
 
-    @Value("${weiXin.grant-type}")
-    public String GRANT_TYPE;
+    private String GRANT_TYPE;
 
-    @Value("${weiXin.img-path}")
-    public String IMG_PATH;
+    private String IMG_PATH;
 }
