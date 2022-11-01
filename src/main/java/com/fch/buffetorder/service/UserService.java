@@ -1,5 +1,6 @@
 package com.fch.buffetorder.service;
 
+import com.fch.buffetorder.entity.Address;
 import com.fch.buffetorder.entity.User;
 
 /**
@@ -11,6 +12,10 @@ import com.fch.buffetorder.entity.User;
 public interface UserService {
 
     boolean regUser(User user);
+
+    Address getAddressByUserId(User user);
+
+    boolean addOrUploadAddress(User user, Address newAddress);
 
     boolean uploadUserNick(User user);
 
