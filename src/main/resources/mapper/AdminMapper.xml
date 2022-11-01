@@ -5,8 +5,8 @@
     <!--   -->
     <insert id="insertAdmin" parameterType="Admin" useGeneratedKeys="true" keyColumn="admin_id" keyProperty="adminId">
         INSERT
-        INTO admin(username, password, role)
-        VALUES (#{username}, #{password}, #{role})
+        INTO admin(username, password, role, avatar)
+        VALUES (#{username}, #{password}, #{role}, #{avatar})
     </insert>
 
     <!--   -->
@@ -21,6 +21,7 @@
         SELECT admin_id,
                username,
                password,
+               avatar,
                role,
                is_enable
         FROM admin
@@ -31,6 +32,7 @@
         SELECT admin_id,
                username,
                password,
+               avatar,
                role,
                is_enable
         FROM admin

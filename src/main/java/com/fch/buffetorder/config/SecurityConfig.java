@@ -1,6 +1,7 @@
 package com.fch.buffetorder.config;
 
 
+import com.fch.buffetorder.filter.JwtAuthenticationFilter;
 import com.fch.buffetorder.filter.JwtLoginFilter;
 import com.fch.buffetorder.handler.FailureHandler;
 import com.fch.buffetorder.handler.SuccessHandler;
@@ -76,7 +77,7 @@ public class SecurityConfig {
                 .cors().configurationSource(corsConfigurationSource())
                 .and().csrf().disable()
                 .addFilter(jwtLoginFilter(http))
-                //.addFilter(new JwtAuthenticationFilter(authenticationManager(http)))
+                .addFilter(jwtAuthenticationFilter(http))
                 .build();
     }
 
@@ -87,6 +88,12 @@ public class SecurityConfig {
         jwtLoginFilter.setAuthenticationFailureHandler(failureHandler);
         return jwtLoginFilter;
     }
+
+    @Bean
+    JwtAuthenticationFilter jwtAuthenticationFilter(HttpSecurity http) throws Exception {
+        return new JwtAuthenticationFilter(authenticationManager(http));
+    }
+
     @Bean
     WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring()

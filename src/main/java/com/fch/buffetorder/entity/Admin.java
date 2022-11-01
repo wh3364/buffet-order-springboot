@@ -20,6 +20,7 @@ public class Admin implements UserDetails {
     private Integer adminId;
     private String username;
     private String password;
+    private String avatar;
     private String role;
     private Integer isEnable;
     @Override
