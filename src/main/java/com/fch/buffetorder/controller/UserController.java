@@ -104,7 +104,7 @@ public class UserController {
             user.setOpenId(openId);
             String avatarPath;
             try {
-                avatarPath = weiXinParam.IMG_PATH + uploadImg("img/avatar/", UUID.randomUUID().toString(), file, request);
+                avatarPath = weiXinParam.getIMG_PATH() + uploadImg("img/avatar/", UUID.randomUUID().toString(), file, request);
             } catch (IOException e) {
                 e.printStackTrace();
                 return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
