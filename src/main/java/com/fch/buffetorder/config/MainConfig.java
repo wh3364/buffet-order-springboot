@@ -10,6 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 /**
  * @program: BuffetOrder
@@ -23,11 +24,20 @@ public class MainConfig {
     @Autowired
     private Environment env;
 
+    /**
+     * 注入请求模板
+     * @param factory
+     * @return
+     */
     @Bean
     public RestTemplate restTemplate(ClientHttpRequestFactory factory) {
         return new RestTemplate(factory);
     }
 
+    /**
+     * 这里配置请求
+     * @return
+     */
     @Bean
     public ClientHttpRequestFactory simpleClientHttpRequestFactory() {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
@@ -37,6 +47,19 @@ public class MainConfig {
         return factory;
     }
 
+    /**
+     * 关闭 servlet 容器对 websocket 端点的扫描
+     * @return
+     */
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
+
+    /**
+     * 这里配置redisson
+     * @return
+     */
     @Bean
     public RedissonClient config(){
         //创建配置实例
