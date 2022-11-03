@@ -1,6 +1,5 @@
 package com.fch.buffetorder.config;
 
-
 import com.fch.buffetorder.filter.JwtAuthenticationFilter;
 import com.fch.buffetorder.filter.JwtLoginFilter;
 import com.fch.buffetorder.handler.FailureHandler;
@@ -22,7 +21,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-
 /**
  * @program: BuffetOrder
  * @description:
@@ -42,7 +40,8 @@ public class SecurityConfig {
     FailureHandler failureHandler;
 
     private final String[] USER_PATH = {"/Food/**", "/Login/**", "/Order/**", "/User/**"};
-    private final String[] PASS_PATH = {"/login", "/logout", "/reg"};
+
+    private final String[] PASS_PATH = {"/login", "/logout", "/reg", "/Test/**"};
 
     @Autowired
     public SecurityConfig(AdminService AdminDetailsService, SuccessHandler successHandler, FailureHandler failureHandler) {
@@ -63,9 +62,6 @@ public class SecurityConfig {
                 .antMatchers("/Admin/**").hasRole("admin")
                 .antMatchers(USER_PATH).permitAll()
                 .antMatchers(PASS_PATH).permitAll()
-                .and()
-                // 登出
-                .logout().logoutUrl("/logout")
                 .and()
                 // 登录
                 .formLogin().loginPage("/login").loginProcessingUrl("/login")
@@ -114,13 +110,17 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    //spring security 配置跨域访问资源
+
+    /**
+     * spring security 配置跨域访问资源
+     * @return CorsConfigurationSource
+     */
     private CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.addAllowedOriginPattern("*"); //同源配置，*表示任何请求都视为同源，若需指定ip和端口可以改为如“localhost：8080”，多个以“，”分隔；
-        corsConfiguration.addAllowedHeader("*");  //header，允许哪些header
-        corsConfiguration.addAllowedMethod("*");  //允许的请求方法，POST、GET、PUT等
+        corsConfiguration.addAllowedHeader("*"); //header，允许哪些header
+        corsConfiguration.addAllowedMethod("*"); //允许的请求方法，POST、GET、PUT等
         corsConfiguration.addExposedHeader("token"); //拓展header 浏览器放过response的token
         corsConfiguration.setAllowCredentials(true); //允许浏览器携带cookie
         source.registerCorsConfiguration("/**", corsConfiguration); //配置允许跨域访问的url

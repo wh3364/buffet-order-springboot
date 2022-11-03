@@ -2,8 +2,8 @@ package com.fch.buffetorder.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.fch.buffetorder.api.WebNotify;
 import com.fch.buffetorder.entity.Order;
+import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.service.OrderService;
 import com.fch.buffetorder.websocket.WebSocket;
 import com.github.pagehelper.PageInfo;
@@ -13,8 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
-
 
 /**
  * @program: BuffetOrder
@@ -26,7 +26,10 @@ import java.util.Date;
 @CrossOrigin
 @RestController
 @RequestMapping("Assistant")
-public class AdminController {
+public class AssistantController {
+
+    @Autowired
+    AdminService adminService;
 
     @Autowired
     OrderService orderService;
@@ -34,33 +37,15 @@ public class AdminController {
     @Autowired
     WebSocket webSocket;
 
-    @PostMapping("login")
-    public ResponseEntity adminLogin() {
-        JSONObject r = new JSONObject();
-        JSONObject resp = new JSONObject();
-        r.put("token", "admin-token");
-        resp.put("code", 20000);
-        resp.put("data", r);
-        return new ResponseEntity(resp, HttpStatus.OK);
-    }
-
     @GetMapping("Info")
-    public ResponseEntity getAdminInfo() {
-        JSONObject r = new JSONObject();
-        JSONObject resp = new JSONObject();
-        r.put("roles", "admin");
-        r.put("introduction", "I am a super administrator");
-        r.put("avatar", "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
-        r.put("name", "Super Admin");
-        resp.put("code", 20000);
-        resp.put("data", r);
-        return new ResponseEntity(resp, HttpStatus.OK);
+    public ResponseEntity getAdminInfo(HttpServletRequest request) {
+        return new ResponseEntity(adminService.getInfo(request.getHeader("token")), HttpStatus.OK);
     }
 
     @PostMapping("Logout")
     public ResponseEntity adminLogout() {
         JSONObject resp = new JSONObject();
-        resp.put("code", 20000);
+        resp.put("code", 200);
         resp.put("data", "success");
         return new ResponseEntity(resp, HttpStatus.OK);
     }
@@ -83,18 +68,11 @@ public class AdminController {
         r.put("status", "published");
         rs.add(r);
         JSONObject resp = new JSONObject();
-        resp.put("code", 20000);
+        resp.put("code", 200);
         data.put("total", 1);
         data.put("items", rs);
         resp.put("data", data);
         return new ResponseEntity(resp, HttpStatus.OK);
-    }
-
-    @GetMapping("Test")
-    public ResponseEntity test() {
-        WebNotify webNotify = new WebNotify("这是标题", "这是信息", "info", 0);
-        webSocket.sendMessage(JSONObject.toJSONString(webNotify));
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("GetOrderList")
@@ -111,7 +89,10 @@ public class AdminController {
         order.setOrderWay(way);
         order.setOrderState(state);
         PageInfo<Order> orders = orderService.adminQueryOrdersByWayAndState(order, dates, pageNum, pageSize);
-        return new ResponseEntity(orders, HttpStatus.OK);
+        JSONObject resp = new JSONObject();
+        resp.put("code", 200);
+        resp.put("data", orders);
+        return new ResponseEntity(resp, HttpStatus.OK);
     }
 
     @GetMapping("GetOrder")
@@ -120,7 +101,10 @@ public class AdminController {
         order.setOrderId(orderId);
         order.setUserId(userId);
         order = orderService.queryOrderByOrderIdAndUserId(order);
-        return new ResponseEntity(order, HttpStatus.OK);
+        JSONObject resp = new JSONObject();
+        resp.put("code", 200);
+        resp.put("data", order);
+        return new ResponseEntity(resp, HttpStatus.OK);
     }
 
     @PostMapping("GoFood")

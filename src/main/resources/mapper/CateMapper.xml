@@ -10,4 +10,14 @@
         FROM cate
         WHERE is_enable = 1
     </select>
+
+    <!--查询所有食物分裂-->
+    <select id="AdminQueryAllCates" resultType="Cate">
+        SELECT cate_id,
+               cate_name,
+               cate_weight,
+               is_enable
+        FROM cate
+        WHERE is_enable = 1
+    </select>
 </mapper>

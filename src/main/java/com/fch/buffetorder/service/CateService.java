@@ -12,4 +12,6 @@ import java.util.List;
  **/
 public interface CateService {
     List<Cate> queryAllCates();
+
+    List<Cate> AdminQueryAllCates();
 }

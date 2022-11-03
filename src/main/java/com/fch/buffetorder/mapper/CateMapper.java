@@ -16,4 +16,6 @@ import java.util.List;
 @Repository
 public interface CateMapper {
     List<Cate> queryAllCates();
+
+    List<Cate> AdminQueryAllCates();
 }

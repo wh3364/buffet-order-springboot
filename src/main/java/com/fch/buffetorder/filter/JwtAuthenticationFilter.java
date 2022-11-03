@@ -7,7 +7,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -33,13 +32,10 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         //读取request头部的token
         String header = request.getHeader("token");
-
         if (header == null) {
-            //如果没有token，无认证放行，相当于没有从token中得到角色信息，只能访问无需登录就可以访问的服务
             chain.doFilter(request, response);
             return;
         }
-
         //解析token
         Claims token = jwtUtils.getClaimsFromToken(header);
         if (token == null) {
@@ -47,19 +43,15 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
             return;
         }
-
         //从token中获取角色信息
         UsernamePasswordAuthenticationToken authenticationToken = jwtUtils.buildAuthentication(token);
-
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
         //token临近过期，发放新的token
         if (jwtUtils.isRefress(token)) {
             //快过期了，刷新token
             header = jwtUtils.generatorToken(token.getSubject(), token.get("role", String.class));
             response.addHeader("token", header);
         }
-
         //认证放行
         chain.doFilter(request, response);
     }

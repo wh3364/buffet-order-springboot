@@ -1,5 +1,6 @@
 package com.fch.buffetorder.handler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.Admin;
 import com.fch.buffetorder.mapper.AdminMapper;
 import com.fch.buffetorder.util.JwtUtils;
@@ -41,16 +42,12 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
         String token = jwtUtils.generatorToken(userName, role);
         response.addHeader("token", token);
 
-        //返回登陆成功信息
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", 200);
+        jsonObject.put("message", "登录成功");
         response.setContentType("application/json;charset=utf-8");
-//        BaseResponse baseResponse = new BaseResponse();
-//        baseResponse.setCode(0);
-//        baseResponse.setMsg("成功");
-//        user.setUserPasw("");
-//        baseResponse.setData(user);
-//        Gson gson = new Gson();
         try (PrintWriter out = response.getWriter()) {
-            out.write("{\"code\":1,\"msg\":\"成功\"}");
+            out.write(jsonObject.toJSONString());
             out.close();
             out.flush();
         }

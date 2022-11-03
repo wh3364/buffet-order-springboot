@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
+
 /**
  * @program: BuffetOrder
  * @description: Redisson工具类

@@ -20,6 +20,8 @@ import org.redisson.client.codec.StringCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.client.RestTemplate;
@@ -120,7 +122,7 @@ class BuffetorderApplicationTests {
     @Test
     void regAdmin(){
         Admin admin = new Admin();
-        admin.setRole("admin");
+        //admin.setRole("admin");
         admin.setUsername("admin");
         admin.setUsername("admin");
         admin.setPassword("123456");

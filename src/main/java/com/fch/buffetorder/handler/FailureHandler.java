@@ -1,6 +1,6 @@
 package com.fch.buffetorder.handler;
 
-import org.springframework.http.HttpStatus;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -21,9 +21,12 @@ import java.io.PrintWriter;
 public class FailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code", 401);
+        jsonObject.put("message", "用户名或密码错误");
         response.setContentType("application/json;charset=utf-8");
         try (PrintWriter out = response.getWriter()) {
-            out.write("{\"code\":-1,\"msg\":\"失败\"}");
+            out.write(jsonObject.toJSONString());
             out.close();
             out.flush();
         }

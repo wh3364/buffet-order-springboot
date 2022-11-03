@@ -20,7 +20,6 @@
     <select id="queryAdminByUsername" parameterType="Admin" resultType="Admin">
         SELECT admin_id,
                username,
-               password,
                avatar,
                role,
                is_enable

@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-
-
 /**
  * @program: BuffetOrder
  * @description: 获得微信的openid

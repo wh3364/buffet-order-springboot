@@ -226,30 +226,30 @@ public class OrderServiceImpl implements OrderService {
     public JSONObject goFood(Order order) {
         JSONObject res = new JSONObject();
         res.put("code", 0);
-        res.put("msg", "出餐失败");
+        res.put("message", "出餐失败");
         order = orderMapper.queryOrderByOrderIdAndUserId(order);
         if (order == null){
             res.put("code", 0);
-            res.put("msg", "订单不存在");
+            res.put("message", "订单不存在");
             return res;
         }
         if (order.getOrderState() == 2 || order.getOrderState() == 3){
             res.put("code", 0);
-            res.put("msg", "订单已出餐或完成");
+            res.put("message", "订单已出餐或完成");
         }
         if (order.getOrderState() == 4){
             res.put("code", 0);
-            res.put("msg", "订单已取消");
+            res.put("message", "订单已取消");
         }
         if (order.getOrderState() == 0){
             res.put("code", 0);
-            res.put("msg", "订单未付款");
+            res.put("message", "订单未付款");
         }
         if (order.getOrderState() == 1){
             order.setOrderState(2);
             if (orderMapper.uploadOrderGoFood(order) > 0){
-                res.put("code", 1);
-                res.put("msg", "成功出餐");
+                res.put("code", 200);
+                res.put("message", "成功出餐");
             }
         }
         return res;
