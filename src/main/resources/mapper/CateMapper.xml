@@ -2,6 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fch.buffetorder.mapper.CateMapper">
 
+    <!--增加分类-->
+    <insert id="insertCate" parameterType="Cate" useGeneratedKeys="true" keyColumn="cate_id" keyProperty="cateId">
+        INSERT
+        INTO cate (cate_name, cate_weight)
+        VALUES (#{cateName}, #{cateWeight})
+    </insert>
+
+    <!--更新分类-->
+    <update id="updateCate" parameterType="Cate" useGeneratedKeys="true" keyColumn="cate_id" keyProperty="cateId">
+        UPDATE cate
+        SET cate_name   = #{cateName},
+            cate_weight = #{cateWeight},
+            is_enable   = #{isEnable}
+        WHERE cate_id = #{cateId}
+    </update>
+
     <!--查询所有食物分裂-->
     <select id="queryAllCates" resultType="Cate">
         SELECT cate_id,
@@ -12,12 +28,11 @@
     </select>
 
     <!--查询所有食物分裂-->
-    <select id="AdminQueryAllCates" resultType="Cate">
+    <select id="adminQueryAllCates" resultType="Cate">
         SELECT cate_id,
                cate_name,
                cate_weight,
                is_enable
         FROM cate
-        WHERE is_enable = 1
     </select>
 </mapper>

@@ -17,5 +17,9 @@ import java.util.List;
 public interface CateMapper {
     List<Cate> queryAllCates();
 
-    List<Cate> AdminQueryAllCates();
+    List<Cate> adminQueryAllCates();
+
+    int updateCate(Cate cate);
+
+    int insertCate(Cate cate);
 }
