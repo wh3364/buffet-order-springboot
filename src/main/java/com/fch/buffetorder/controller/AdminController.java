@@ -96,20 +96,14 @@ public class AdminController {
     }
 
     @PostMapping("UpdateFood")
-    public ResponseEntity updateFood(@RequestBody String json) {
-        log.info(json);
-        Food food = JSONObject.parseObject(json, Food.class);
+    public ResponseEntity updateFood(@RequestBody Food food) {
         JSONObject res = foodService.updateFood(food);
-        log.info(food.toString());
        return new ResponseEntity(res, HttpStatus.OK);
     }
 
     @PostMapping("AddFood")
-    public ResponseEntity addFood(@RequestBody String json) {
-        log.info(json);
-        Food food = JSONObject.parseObject(json, Food.class);
+    public ResponseEntity addFood(@RequestBody Food food) {
         JSONObject res = foodService.addFood(food);
-        log.info(food.toString());
         return new ResponseEntity(res, HttpStatus.OK);
     }
 }

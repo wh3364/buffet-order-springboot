@@ -81,7 +81,12 @@ public class FoodServiceImpl implements FoodService {
                 res.put("code", 0);
                 return res;
             }
-            food.setFoodDetail(foodDetail.toJSONString());
+            if (foodDetail == null) {
+                food.setHaveDetail(0);
+                food.setFoodDetail(null);
+            } else {
+                food.setFoodDetail(foodDetail.toJSONString());
+            }
             return getUpdateRes(food, res);
         }
     }
@@ -102,21 +107,32 @@ public class FoodServiceImpl implements FoodService {
                 res.put("code", 0);
                 return res;
             }
-            food.setFoodDetail(foodDetail.toJSONString());
+            if (foodDetail == null) {
+                food.setHaveDetail(0);
+                food.setFoodDetail(null);
+            } else {
+                food.setFoodDetail(foodDetail.toJSONString());
+            }
             return getAddRes(food, res);
         }
     }
 
     private JSONObject getFoodDetail(String foodDetailStr) {
-        JSONObject foodDetail;
-        foodDetail = JSONObject.parseObject(foodDetailStr);
+        JSONObject foodDetail = JSONObject.parseObject(foodDetailStr);
         MultiDetail multiDetail = JSONObject.parseObject(foodDetail.getString("dM"), MultiDetail.class);
         List<RadioDetail> radioDetails = JSONArray.parseArray(foodDetail.getString("dR"), RadioDetail.class);
-        if (radioDetails.get(0).getRS().size() > 0) {
-            radioDetails.get(0).getRS().get(0).setS(1);
+        if (multiDetail.getMS().size() > 0) {
+            foodDetail.put("dM", multiDetail);
         }
-        foodDetail.put("dM", multiDetail);
-        foodDetail.put("dR", radioDetails);
+        if (radioDetails.size() > 0) {
+            if (radioDetails.get(0).getRS().size() > 0) {
+                radioDetails.get(0).getRS().get(0).setS(1);
+            }
+            foodDetail.put("dR", radioDetails);
+        }
+        if (multiDetail.getMS().size() == 0 && radioDetails.size() == 0) {
+            return null;
+        }
         return foodDetail;
     }
 
