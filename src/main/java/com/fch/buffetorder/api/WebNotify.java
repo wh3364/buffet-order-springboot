@@ -10,18 +10,36 @@ import lombok.Data;
  **/
 @Data
 public class WebNotify {
+    private Integer orderId;
     private String title;
     private String message;
     private String type;
     private Integer duration;
+    private boolean dangerouslyUseHTMLString;
 
-    public WebNotify(String title, String message, String type, Integer duration) {
+    public WebNotify(Integer orderId, String title, String message, Type type, Integer duration, boolean dangerouslyUseHTMLString) {
+        this.orderId = orderId;
         this.title = title;
         this.message = message;
-        this.type = type;
+        this.type = type.type();
         this.duration = duration;
+        this.dangerouslyUseHTMLString = dangerouslyUseHTMLString;
     }
 
     public WebNotify() {
+    }
+
+    public enum Type{
+        SUCCESS("success"), WARNING("warning"), INFO("info"), ERROR("error");
+
+        private String type;
+
+        Type(String type) {
+            this.type = type;
+        }
+
+        public String type(){
+            return type;
+        }
     }
 }

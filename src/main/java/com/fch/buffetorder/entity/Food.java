@@ -15,6 +15,6 @@ public class Food {
     private String cateName;
     private String foodNote;
     private BigDecimal foodPrice;
-    private BigDecimal foodWeight;
+    private Integer foodWeight;
     private Integer isEnable;
 }

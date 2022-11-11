@@ -21,7 +21,7 @@ public class WebSocket {
     //与某个客户端的连接会话，需要通过它来给客户端发送数据
     private Session session;
     //concurrent包的线程安全Set，用来存放每个客户端对应的MyWebSocket对象。
-    private static CopyOnWriteArraySet<WebSocket> webSocketSet = new CopyOnWriteArraySet<WebSocket>();
+    private static CopyOnWriteArraySet<WebSocket> webSocketSet = new CopyOnWriteArraySet<>();
 
     /**
      * 连接建立成功调用的方法
@@ -59,7 +59,7 @@ public class WebSocket {
         for (WebSocket webSocket:webSocketSet) {
             log.info("【webSocket消息】广播消息,message={}",message);
             try {
-                webSocket.session.getBasicRemote ().sendText(message);
+                webSocket.session.getBasicRemote().sendText(message);
             } catch (Exception e) {
                 e.printStackTrace ();
             }

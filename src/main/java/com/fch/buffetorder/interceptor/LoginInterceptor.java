@@ -27,7 +27,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         response.setContentType("application/json;charset=UTF-8");
-        log.info("执行了preHandle（）");
+        // log.info("执行了preHandle（）");
         String session_key = request.getHeader("session_key");
         String code = request.getHeader("code");
         if (StringUtils.hasText(session_key)) {

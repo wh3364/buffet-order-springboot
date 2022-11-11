@@ -21,6 +21,14 @@
     </update>
 
     <!--        -->
+    <update id="uploadOrderCompleteOrCancel" parameterType="Order" useGeneratedKeys="true" keyColumn="user_id"
+            keyProperty="userId">
+        UPDATE `order`
+        SET order_state = #{orderState}
+        WHERE order_id = #{orderId}
+    </update>
+
+    <!--        -->
     <update id="uploadOrderGoFood" parameterType="Order" useGeneratedKeys="true" keyColumn="user_id"
             keyProperty="userId">
         UPDATE `order`
@@ -68,9 +76,9 @@
                order_should_pay
         FROM `order`
         WHERE user_id = #{userId}
-            AND order_state = 0
-           OR 1
-           OR 2
+          AND (order_state = 0
+            OR order_state = 1
+            OR order_state = 2)
         ORDER BY order_create_time DESC
     </select>
 
@@ -99,9 +107,32 @@
                order_should_pay,
                order_real_pay
         FROM `order`
-        WHERE (order_way = #{orderWay})
-          AND (order_state = 0 OR 1 OR 2)
+        WHERE order_way = #{orderWay}
           AND (order_create_time BETWEEN #{startDate} AND #{endDate})
+          AND (order_state = 0
+            OR order_state = 1
+            OR order_state = 2)
+        ORDER BY order_create_time DESC
+    </select>
+
+
+    <select id="adminQueryOrdersByWayAndStateCompleteAndCancel" resultType="Order">
+        SELECT order_id,
+               user_id,
+               order_way,
+               order_address,
+               order_create_time,
+               order_json_body,
+               order_get_numb,
+               order_state,
+               order_note,
+               order_should_pay,
+               order_real_pay
+        FROM `order`
+        WHERE order_way = #{orderWay}
+          AND (order_create_time BETWEEN #{startDate} AND #{endDate})
+          AND (order_state = 3
+            OR order_state = 4)
         ORDER BY order_create_time DESC
     </select>
 
@@ -122,6 +153,23 @@
           AND (order_state = #{orderState})
           AND (order_create_time BETWEEN #{startDate} AND #{endDate})
         ORDER BY order_create_time DESC
+    </select>
+
+
+    <select id="adminQueryOrderByOrderId" resultType="Order">
+        SELECT order_id,
+               user_id,
+               order_way,
+               order_address,
+               order_create_time,
+               order_json_body,
+               order_get_numb,
+               order_state,
+               order_note,
+               order_should_pay,
+               order_real_pay
+        FROM `order`
+        WHERE order_id = #{orderId}
     </select>
 
 </mapper>

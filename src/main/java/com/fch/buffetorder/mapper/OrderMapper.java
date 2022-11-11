@@ -21,6 +21,8 @@ public interface OrderMapper {
 
     int uploadOrderPay(Order order);
 
+    int uploadOrderCompleteOrCancel(Order order);
+
     int uploadOrderGoFood(Order order);
 
     Order queryOrderByOrderIdAndUserId(Order order);
@@ -35,8 +37,14 @@ public interface OrderMapper {
                                                      @Param("startDate") Date startDate,
                                                      @Param("endDate") Date endDate);
 
+    List<Order> adminQueryOrdersByWayAndStateCompleteAndCancel(@Param("orderWay") Integer orderWay,
+                                                               @Param("startDate") Date startDate,
+                                                               @Param("endDate") Date endDate);
+
     List<Order> adminQueryOrdersByWayAndState(@Param("orderState") Integer orderState,
                                               @Param("orderWay") Integer orderWay,
                                               @Param("startDate") Date startDate,
                                               @Param("endDate") Date endDate);
+
+    Order adminQueryOrderByOrderId(Order order);
 }

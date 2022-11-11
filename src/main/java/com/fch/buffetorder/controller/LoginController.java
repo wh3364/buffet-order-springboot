@@ -86,54 +86,46 @@ public class LoginController {
      * @return
      */
     @PostMapping("UploadInfo")
-    public ResponseEntity uploadUserNickAvatar(@RequestBody() String json) {
+    public ResponseEntity uploadUserNickAvatar(@RequestBody() String json,
+                                               @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
-        if (StringUtils.hasText(jsonObject.getString("code"))) {
-            JSONObject res = openIdUtil.getOpenId(jsonObject.getString("code"));
-            if (res.getBoolean("flag")) {
-                User user = new User();
-                String openId = res.getString("openId");
-                user.setOpenId(openId);
-                if (!userService.isExistByOpenId(user)) {
-                    return new ResponseEntity(HttpStatus.UNAUTHORIZED);
-                }
-                String msg = "更新失败";
-                String nick = jsonObject.getString("nick");
-                String avatar = jsonObject.getString("avatar");
-                user.setNickName(nick);
-                user.setAvatarPath(avatar);
-                boolean haveException = false;
-                try {
-                    userService.uploadUserAvatar(user);
-                } catch (Exception e) {
-                    log.info("更新头像出错{}", user);
-//                    user.setAvatarPath("https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0");
-                    msg = "更新头像出错";
-                    userService.uploadUserAvatar(user);
-                    haveException = true;
-                }
-                try {
-                    userService.uploadUserNick(user);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    log.info("更新昵称出错{}", user);
-//                    user.setNickName("微信用户");
-                    msg = "更新昵称出错";
-                    userService.uploadUserNick(user);
-                    haveException = true;
-                }
-                if (haveException) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("msg", msg);
-                    map.put("user", user);
-                    return new ResponseEntity(map, HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-                log.info("更新用户信息成功{}", user);
-                return new ResponseEntity(user, HttpStatus.OK);
-            } else {
-                return new ResponseEntity(res.get("msg").toString(), HttpStatus.NOT_ACCEPTABLE);
-            }
+        User user = new User();
+        user.setOpenId(openId);
+        if (!userService.isExistByOpenId(user)) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        String msg = "更新失败";
+        String nick = jsonObject.getString("nick");
+        String avatar = jsonObject.getString("avatar");
+        user.setNickName(nick);
+        user.setAvatarPath(avatar);
+        boolean haveException = false;
+        try {
+            userService.uploadUserAvatar(user);
+        } catch (Exception e) {
+            log.info("更新头像出错{}", user);
+//                    user.setAvatarPath("https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0");
+            msg = "更新头像出错";
+            userService.uploadUserAvatar(user);
+            haveException = true;
+        }
+        try {
+            userService.uploadUserNick(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("更新昵称出错{}", user);
+//                    user.setNickName("微信用户");
+            msg = "更新昵称出错";
+            userService.uploadUserNick(user);
+            haveException = true;
+        }
+        if (haveException) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("msg", msg);
+            map.put("user", user);
+            return new ResponseEntity(map, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        log.info("更新用户信息成功{}", user);
+        return new ResponseEntity(user, HttpStatus.OK);
     }
 }

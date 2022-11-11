@@ -8,7 +8,6 @@ import com.fch.buffetorder.entity.detail.MultiDetail;
 import com.fch.buffetorder.entity.detail.RadioDetail;
 import com.fch.buffetorder.entity.orderbody.OrderBody;
 import com.fch.buffetorder.service.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,9 +19,10 @@ import java.util.List;
  * @CreatedBy: fch
  * @create: 2022-10-21 21:41
  **/
-@Slf4j
 @Component
 public class JsonUtil {
+
+    private static Integer orderNum = 0;
 
     @Autowired
     private UserService userService;
@@ -112,5 +112,17 @@ public class JsonUtil {
         Food food = new Food();
         food.setFoodId(jsonObject.getInteger("id"));
         return food;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getOrderGetNum(){
+        if (orderNum == 10000) {
+            orderNum = 0;
+        }
+        orderNum++;
+        return String.format("%04d", orderNum);
     }
 }

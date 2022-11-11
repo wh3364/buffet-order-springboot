@@ -27,7 +27,14 @@ public interface OrderService {
 
     JSONObject payOrder(Order order, User user);
 
+    JSONObject cancelOrder(Order order, User user);
+
+    JSONObject completeOrder(Order order, User user);
+
     PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Date[] createTime, Integer pageNum, Integer pageSize);
 
+    Order adminQueryOrderByOrderId(Order order);
+
     JSONObject goFood(Order order);
+
 }

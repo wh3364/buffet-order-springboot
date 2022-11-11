@@ -2,6 +2,7 @@ package com.fch.buffetorder.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.WebNotify;
 import com.fch.buffetorder.entity.*;
 import com.fch.buffetorder.entity.detail.MultiDetail;
 import com.fch.buffetorder.entity.detail.RadioDetail;
@@ -13,6 +14,7 @@ import com.fch.buffetorder.mapper.OrderMapper;
 import com.fch.buffetorder.mapper.UserMapper;
 import com.fch.buffetorder.service.OrderService;
 import com.fch.buffetorder.util.JsonUtil;
+import com.fch.buffetorder.websocket.WebSocket;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +48,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     AddressMapper addressMapper;
+
+    @Autowired
+    WebSocket webSocket;
 
     @Autowired
     JsonUtil jsonUtil;
@@ -92,10 +97,9 @@ public class OrderServiceImpl implements OrderService {
         if (orderJsonInDbList.size() == 0) {
             return res;
         }
-        if (way == 0){
-            order.setOrderGetNumb(1);
-        }
-        else if (way == 1) {
+        if (way == 0) {
+            order.setOrderGetNumb(jsonUtil.getOrderGetNum());
+        } else if (way == 1) {
             Address address = new Address();
             address.setUserId(user.getUserId());
             address = addressMapper.queryAddressByUserId(address);
@@ -118,6 +122,13 @@ public class OrderServiceImpl implements OrderService {
         if (orderMapper.createOrder(order) > 0) {
             res.put("order", order);
             res.put("code", 1);
+            String title;
+            if (order.getOrderWay() == 0) {
+                title = "有新的店内订单";
+            } else {
+                title = "有新的外卖订单";
+            }
+            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(), title, "订单号:" + order.getOrderId(), WebNotify.Type.INFO, 0, false)));
         }
         return res;
     }
@@ -142,7 +153,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public PageInfo<Order> userQueryOrderListById(Order order, Integer pageNum, Integer pageSize) {
-        List<Order> orderList = null;
+        List<Order> orderList;
         switch (order.getOrderState()) {
             case 0:
                 PageHelper.startPage(pageNum, pageSize);
@@ -165,6 +176,8 @@ public class OrderServiceImpl implements OrderService {
                     o.setOrderJsonBody(orderJsonBbToOrderRepJson(o.getOrderJsonBody()));
                 }
                 break;
+            default:
+                return null;
         }
         //resOrderList.sort((l1, l2) -> l2.getOrderCreateTime().compareTo(l1.getOrderCreateTime()));
         return new PageInfo<>(orderList);
@@ -200,6 +213,64 @@ public class OrderServiceImpl implements OrderService {
             res.put("code", 1);
             res.put("msg", "支付成功");
             log.info("支付成功 钱{}￥ - 应付{}￥", money, shouldPay);
+            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(), "订单支付成功", "订单号:" + order.getOrderId(), WebNotify.Type.SUCCESS, 0, false)));
+
+        }
+        return res;
+    }
+
+    @Override
+    public JSONObject cancelOrder(Order order, User user) {
+        JSONObject res = new JSONObject();
+        res.put("code", 0);
+        res.put("msg", "取消失败");
+        order = orderMapper.queryOrderByOrderIdAndUserId(order);
+        if (order == null) {
+            res.put("msg", "订单不存在");
+            return res;
+        }
+        if (order.getOrderState() != 0) {
+            res.put("msg", "订单已付款或取消");
+            return res;
+        }
+        if (!order.getUserId().equals(user.getUserId())) {
+            res.put("msg", "这不是你的订单");
+            return res;
+        }
+        order.setOrderState(4);
+        if (orderMapper.uploadOrderCompleteOrCancel(order) > 0) {
+            res.put("code", 1);
+            res.put("msg", "取消成功");
+            log.info("取消成功orderId{}", order.getOrderId());
+            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(), "订单取消", "订单号:" + order.getOrderId(), WebNotify.Type.ERROR, 0, false)));
+        }
+        return res;
+    }
+
+    @Override
+    public JSONObject completeOrder(Order order, User user) {
+        JSONObject res = new JSONObject();
+        res.put("code", 0);
+        res.put("msg", "完成失败");
+        order = orderMapper.queryOrderByOrderIdAndUserId(order);
+        if (order == null) {
+            res.put("msg", "订单不存在");
+            return res;
+        }
+        if (order.getOrderState() != 2) {
+            res.put("msg", "订单不是发货状态");
+            return res;
+        }
+        if (!order.getUserId().equals(user.getUserId())) {
+            res.put("msg", "这不是你的订单");
+            return res;
+        }
+        order.setOrderState(3);
+        if (orderMapper.uploadOrderCompleteOrCancel(order) > 0) {
+            res.put("code", 1);
+            res.put("msg", "完成成功");
+            log.info("完成订单orderId{}", order.getOrderId());
+            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(), "订单完成", "订单号:" + order.getOrderId(), WebNotify.Type.SUCCESS, 5000, false)));
         }
         return res;
     }
@@ -211,15 +282,30 @@ public class OrderServiceImpl implements OrderService {
         Date endDate = createTime[1];
         Integer orderStatus = order.getOrderState();
         Integer orderWay = order.getOrderWay();
-        // 默认 查询 0 1 2
-        if (orderStatus == -1){
-            PageHelper.startPage(pageNum, pageSize);
-            orders = orderMapper.adminQueryOrdersByWayAndStateDefault(orderWay, startDate, endDate);
-        }else {
-            PageHelper.startPage(pageNum, pageSize);
-            orders = orderMapper.adminQueryOrdersByWayAndState(orderStatus, orderWay, startDate, endDate);
+        switch (orderStatus) {
+            //查询 3 4
+            case -2:
+                PageHelper.startPage(pageNum, pageSize);
+                orders = orderMapper.adminQueryOrdersByWayAndStateCompleteAndCancel(orderWay, startDate, endDate);
+                break;
+            //查询 0 1 2
+            case -1:
+                PageHelper.startPage(pageNum, pageSize);
+                orders = orderMapper.adminQueryOrdersByWayAndStateDefault(orderWay, startDate, endDate);
+                break;
+            default:
+                PageHelper.startPage(pageNum, pageSize);
+                orders = orderMapper.adminQueryOrdersByWayAndState(orderStatus, orderWay, startDate, endDate);
+                break;
         }
         return new PageInfo<>(orders);
+    }
+
+    @Override
+    public Order adminQueryOrderByOrderId(Order order) {
+        order = orderMapper.adminQueryOrderByOrderId(order);
+        order.setOrderJsonBody(orderJsonBbToOrderRepJson(order.getOrderJsonBody()));
+        return order;
     }
 
     @Override
@@ -228,26 +314,26 @@ public class OrderServiceImpl implements OrderService {
         res.put("code", 0);
         res.put("message", "出餐失败");
         order = orderMapper.queryOrderByOrderIdAndUserId(order);
-        if (order == null){
+        if (order == null) {
             res.put("code", 0);
             res.put("message", "订单不存在");
             return res;
         }
-        if (order.getOrderState() == 2 || order.getOrderState() == 3){
+        if (order.getOrderState() == 2 || order.getOrderState() == 3) {
             res.put("code", 0);
             res.put("message", "订单已出餐或完成");
         }
-        if (order.getOrderState() == 4){
+        if (order.getOrderState() == 4) {
             res.put("code", 0);
             res.put("message", "订单已取消");
         }
-        if (order.getOrderState() == 0){
+        if (order.getOrderState() == 0) {
             res.put("code", 0);
             res.put("message", "订单未付款");
         }
-        if (order.getOrderState() == 1){
+        if (order.getOrderState() == 1) {
             order.setOrderState(2);
-            if (orderMapper.uploadOrderGoFood(order) > 0){
+            if (orderMapper.uploadOrderGoFood(order) > 0) {
                 res.put("code", 200);
                 res.put("message", "成功出餐");
             }

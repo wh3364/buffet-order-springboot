@@ -15,9 +15,18 @@ import java.util.List;
 @Mapper
 @Repository
 public interface FoodMapper {
+    int addFood(Food food);
+
+    int updateFood(Food food);
+
     List<Food> queryAllFoods();
 
     Food queryFoodById(Food food);
 
     Food queryFoodImgUrlById(Food food);
+
+    Food adminQueryFoodById(Food food);
+
+    List<Food> adminQueryAllFoods();
+
 }

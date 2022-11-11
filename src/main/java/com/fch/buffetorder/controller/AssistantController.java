@@ -96,11 +96,16 @@ public class AssistantController {
     }
 
     @GetMapping("GetOrder")
-    public ResponseEntity getOrder(@RequestParam Integer orderId, @RequestParam Integer userId) {
+    public ResponseEntity getOrder(@RequestParam Integer orderId,
+                                   @RequestParam(required = false, defaultValue = "-1") Integer userId) {
         Order order = new Order();
         order.setOrderId(orderId);
         order.setUserId(userId);
-        order = orderService.queryOrderByOrderIdAndUserId(order);
+        if (userId == -1){
+            order = orderService.adminQueryOrderByOrderId(order);
+        }else {
+            order = orderService.queryOrderByOrderIdAndUserId(order);
+        }
         JSONObject resp = new JSONObject();
         resp.put("code", 200);
         resp.put("data", order);

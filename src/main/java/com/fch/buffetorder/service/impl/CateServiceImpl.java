@@ -49,6 +49,7 @@ public class CateServiceImpl implements CateService {
     public JSONObject updateCate(Cate cate) {
         JSONObject res = new JSONObject();
         if (cateMapper.updateCate(cate) > 0) {
+            res.put("data", cate);
             res.put("code", 200);
             res.put("message", "修改成功");
         } else {
@@ -62,6 +63,7 @@ public class CateServiceImpl implements CateService {
     public JSONObject addCate(Cate cate) {
         JSONObject res = new JSONObject();
         if (cateMapper.insertCate(cate) > 0) {
+            res.put("data", cate);
             res.put("code", 200);
             res.put("message", "添加成功");
         }

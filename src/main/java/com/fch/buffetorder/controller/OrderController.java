@@ -129,4 +129,47 @@ public class OrderController {
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
+
+    @PostMapping("CancelOrder")
+    public ResponseEntity cancelOrder(@RequestBody String json,
+                                      @RequestAttribute("openId") String openId) {
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        if (jsonObject.size() > 0) {
+            if (jsonUtil.needReg(openId)) {
+                return new ResponseEntity(HttpStatus.FORBIDDEN);
+            }
+            User user = new User();
+            user.setOpenId(openId);
+            user = userService.queryUserIdByOpenId(user);
+            user.setOpenId(openId);
+            Order order = new Order();
+            order.setUserId(user.getUserId());
+            order.setOrderId(jsonObject.getInteger("openId"));
+            JSONObject resp = orderService.cancelOrder(order, user);
+            log.info("取消订单");
+            return new ResponseEntity(resp, HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
+    @PostMapping("CompleteOrder")
+    public ResponseEntity completeOrder(@RequestBody String json,
+                                        @RequestAttribute("openId") String openId) {
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        if (jsonObject.size() > 0) {
+            if (jsonUtil.needReg(openId)) {
+                return new ResponseEntity(HttpStatus.FORBIDDEN);
+            }
+            User user = new User();
+            user.setOpenId(openId);
+            user = userService.queryUserIdByOpenId(user);
+            user.setOpenId(openId);
+            Order order = new Order();
+            order.setUserId(user.getUserId());
+            order.setOrderId(jsonObject.getInteger("openId"));
+            JSONObject resp = orderService.completeOrder(order, user);
+            log.info("完成订单");
+            return new ResponseEntity(resp, HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+    }
 }
