@@ -2,6 +2,7 @@ package com.fch.buffetorder.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.Cate;
+import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
 import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.service.FoodService;
@@ -77,12 +78,14 @@ public class AdminController {
     public ResponseEntity updateFoodImg(@RequestParam("File") MultipartFile file,
                                         @RequestParam() Integer foodId,
                                         HttpServletRequest request) {
+        JSONObject res = new JSONObject();
         Food food = new Food();
         food.setFoodId(foodId);
         if (!foodService.isExistsByFoodId(food) || file.isEmpty()){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            res.put("code", 500);
+            res.put("message", "还未创建食物或图片为空");
+            return new ResponseEntity(res, HttpStatus.OK);
         }
-        JSONObject res = new JSONObject();
         String imgPath;
         try {
             imgPath =  weiXinParam.getIMG_PATH() + uploadImgUtil.uploadImg("img/food/", foodId.toString(), file, request);
@@ -106,4 +109,34 @@ public class AdminController {
         JSONObject res = foodService.addFood(food);
         return new ResponseEntity(res, HttpStatus.OK);
     }
+
+    @GetMapping("GetAllDetails")
+    public ResponseEntity getAllDetails() {
+        return new ResponseEntity(foodService.queryAllDefault(), HttpStatus.OK);
+    }
+
+    @PostMapping("UpdateDetail")
+    public ResponseEntity updateDetail(@RequestBody Detail detail) {
+        if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(foodService.updateDetail(detail), HttpStatus.OK);
+    }
+
+    @PostMapping("AddDetail")
+    public ResponseEntity addDetail(@RequestBody Detail detail) {
+        if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(foodService.addDetail(detail), HttpStatus.OK);
+    }
+
+    @PostMapping("DeleteDetail")
+    public ResponseEntity deleteDetail(@RequestBody Detail detail) {
+        if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(foodService.deleteDetail(detail), HttpStatus.OK);
+    }
+
 }

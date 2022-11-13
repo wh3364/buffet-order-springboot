@@ -11,9 +11,9 @@
 
     <!--   -->
     <!--<update id="uploadAddress"  parameterType="Address"  useGeneratedKeys="true" keyColumn="address_id" keyProperty="addressId">-->
-        <!--UPDATE address-->
-        <!--SET address = #{address}-->
-        <!--WHERE user_id = #{userId}-->
+    <!--UPDATE address-->
+    <!--SET address = #{address}-->
+    <!--WHERE user_id = #{userId}-->
     <!--</update>-->
 
     <!--   -->
@@ -21,9 +21,10 @@
         SELECT admin_id,
                username,
                avatar,
-               role,
+               r.role,
                is_enable
         FROM admin
+                 JOIN role r on admin.role = r.role_id
         WHERE username = #{username}
     </select>
 
@@ -32,9 +33,10 @@
                username,
                password,
                avatar,
-               role,
+               r.role,
                is_enable
         FROM admin
+                 JOIN role r on admin.role = r.role_id
         WHERE username = #{username}
     </select>
 </mapper>

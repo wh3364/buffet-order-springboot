@@ -104,4 +104,33 @@
                  JOIN cate
                       ON food.food_cate = cate.cate_id
     </select>
+
+    <insert id="addDetail" parameterType="Detail" useGeneratedKeys="true" keyColumn="detail_id" keyProperty="detailId">
+        INSERT
+        INTO detail (detail_name, detail_price, detail_type)
+        VALUES (#{detailName}, #{detailPrice}, #{detailType})
+    </insert>
+
+    <delete id="deleteDetail" parameterType="Detail">
+        DELETE
+        FROM detail
+        WHERE detail_id = #{detailId}
+    </delete>
+
+    <update id="updateDetail" parameterType="Detail" useGeneratedKeys="true" keyColumn="detail_id"
+            keyProperty="detailId">
+        UPDATE detail
+        SET detail_name  = #{detailName},
+            detail_price = #{detailPrice},
+            detail_type  = #{detailType}
+        WHERE detail_id = #{detailId}
+    </update>
+
+    <select id="queryAllDetail" resultType="Detail">
+        SELECT detail_id,
+               detail_name,
+               detail_price,
+               detail_type
+        FROM detail
+    </select>
 </mapper>

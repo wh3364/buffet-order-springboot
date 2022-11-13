@@ -1,6 +1,7 @@
 package com.fch.buffetorder.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
 
 import java.util.List;
@@ -23,4 +24,12 @@ public interface FoodService {
     JSONObject updateFood(Food food);
 
     JSONObject addFood(Food food);
+
+    JSONObject queryAllDefault();
+
+    JSONObject updateDetail(Detail detail);
+
+    JSONObject addDetail(Detail detail);
+
+    JSONObject deleteDetail(Detail detail);
 }

@@ -30,9 +30,9 @@ public class WebSocket {
     public void onOpen(Session session){
         this.session=session;
         //最大链接数1
-        if (webSocketSet.size() > 0){
-            return;
-        }
+//        if (webSocketSet.size() > 0){
+//            return;
+//        }
         webSocketSet.add(this); //加入set中
         log.info("【WebSocket消息】有新的连接，总数:{}",webSocketSet.size());
     }

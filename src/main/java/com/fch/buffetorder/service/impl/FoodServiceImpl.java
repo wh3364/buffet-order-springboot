@@ -2,6 +2,7 @@ package com.fch.buffetorder.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
 import com.fch.buffetorder.entity.detail.MultiDetail;
 import com.fch.buffetorder.entity.detail.RadioDetail;
@@ -115,6 +116,59 @@ public class FoodServiceImpl implements FoodService {
             }
             return getAddRes(food, res);
         }
+    }
+
+    @Override
+    public JSONObject queryAllDefault() {
+        JSONObject res = new JSONObject();
+        List<Detail> details = foodMapper.queryAllDetail();
+        if (details.size() > 0) {
+            res.put("data", details);
+            res.put("code", 200);
+        } else {
+            res.put("message", "查询失败");
+            res.put("code", 0);
+        }
+        return res;
+    }
+
+    @Override
+    public JSONObject updateDetail(Detail detail) {
+        JSONObject res = new JSONObject();
+        if (foodMapper.updateDetail(detail) > 0){
+            res.put("data", detail);
+            res.put("code", 200);
+        }else {
+            res.put("massage", "修改失败");
+            res.put("code", 0);
+        }
+        return res;
+    }
+
+    @Override
+    public JSONObject addDetail(Detail detail) {
+        JSONObject res = new JSONObject();
+        if (foodMapper.addDetail(detail) > 0){
+            res.put("data", detail);
+            res.put("code", 200);
+        }else {
+            res.put("massage", "添加失败");
+            res.put("code", 0);
+        }
+        return res;
+    }
+
+    @Override
+    public JSONObject deleteDetail(Detail detail) {
+        JSONObject res = new JSONObject();
+        if (foodMapper.deleteDetail(detail) > 0){
+            res.put("data", detail);
+            res.put("code", 200);
+        }else {
+            res.put("massage", "删除失败");
+            res.put("code", 0);
+        }
+        return res;
     }
 
     private JSONObject getFoodDetail(String foodDetailStr) {

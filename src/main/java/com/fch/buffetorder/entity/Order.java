@@ -13,7 +13,7 @@ public class Order {
     private Integer userId;
     private Integer orderWay;
     private String orderAddress;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss" ,timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone="GMT+8")
     private Date orderCreateTime;
     private String orderJsonBody;
     private String orderGetNumb;

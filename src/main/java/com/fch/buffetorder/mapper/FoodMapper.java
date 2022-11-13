@@ -1,5 +1,6 @@
 package com.fch.buffetorder.mapper;
 
+import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -28,5 +29,13 @@ public interface FoodMapper {
     Food adminQueryFoodById(Food food);
 
     List<Food> adminQueryAllFoods();
+
+    int addDetail(Detail detail);
+
+    int deleteDetail(Detail detail);
+
+    int updateDetail(Detail detail);
+
+    List<Detail> queryAllDetail();
 
 }
