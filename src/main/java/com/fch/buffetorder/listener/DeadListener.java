@@ -26,15 +26,18 @@ public class DeadListener {
     OrderService orderService;
 
     @RabbitListener(queues = RabbitConfig.DEAD_QUEUE)
-    public void onMessage(Message message, Channel channel){
+    public void onMessage(Message message, Channel channel) {
+        long tag = message.getMessageProperties().getDeliveryTag();
         try {
-            long tag = message.getMessageProperties().getDeliveryTag();
             String json = new String(message.getBody(), StandardCharsets.UTF_8);
             Order order = JSONObject.parseObject(json, Order.class);
             orderService.confirmPay(order);
-            channel.basicAck(tag, true);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            try {
+                channel.basicAck(tag, true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
