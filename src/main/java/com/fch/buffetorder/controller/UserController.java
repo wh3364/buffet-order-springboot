@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 /**
@@ -53,6 +54,15 @@ public class UserController {
 //        return new ResponseEntity(HttpStatus.BAD_REQUEST);
 //    }
 
+    @PostMapping("AddMoney")
+    public ResponseEntity addMoney(@RequestAttribute("openId") String openId) {
+        User user = new User();
+        user.setOpenId(openId);
+        user = userService.addMoney(user, BigDecimal.valueOf(100));
+        user.setOpenId(null);
+        user.setUserId(null);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
 
     @GetMapping("GetAddress")
     public ResponseEntity addOrUploadAddress(@RequestAttribute("openId") String openId) {

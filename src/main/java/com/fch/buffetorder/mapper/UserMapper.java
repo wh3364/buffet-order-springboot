@@ -20,6 +20,8 @@ public interface UserMapper {
      */
     int addUser(User user);
 
+    int uploadUserMoney(User user);
+
     int uploadUserNick(User user);
 
     int uploadUserAvatar(User user);
@@ -29,6 +31,5 @@ public interface UserMapper {
     User queryUserByOpenId(User user);
 
     User queryUserIdByOpenId(User user);
-
 
 }

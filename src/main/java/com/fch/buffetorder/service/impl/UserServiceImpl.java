@@ -8,6 +8,8 @@ import com.fch.buffetorder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 /**
  * @program: BuffetOrder
  * @description: 登录接口实现
@@ -22,6 +24,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     AddressMapper addressMapper;
+
+    @Override
+    public User addMoney(User user, BigDecimal money) {
+        User u = userMapper.queryUserByOpenId(user);
+        u.setMoney(u.getMoney().add(money));
+        userMapper.uploadUserMoney(u);
+        return userMapper.uploadUserMoney(u) > 0 ? u : null;
+    }
+
     /**
      * 首次登录,注册信息到数据库
      *
@@ -54,8 +65,7 @@ public class UserServiceImpl implements UserService {
         if (ad == null) {
             addressMapper.addAddress(newAddress);
             return true;
-        }
-        else {
+        } else {
             addressMapper.uploadAddress(newAddress);
             return true;
         }

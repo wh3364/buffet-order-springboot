@@ -9,6 +9,13 @@
         VALUES (#{openId}, #{nickName}, #{avatarPath})
     </insert>
 
+    <!--更新用户钱-->
+    <update id="uploadUserMoney" parameterType="User" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
+        UPDATE user
+        SET money = #{money}
+        WHERE open_id = #{openId}
+    </update>
+
     <!--更新用户昵称-->
     <update id="uploadUserNick" parameterType="User" useGeneratedKeys="true" keyColumn="user_id" keyProperty="userId">
         UPDATE user

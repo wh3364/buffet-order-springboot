@@ -3,6 +3,8 @@ package com.fch.buffetorder.service;
 import com.fch.buffetorder.entity.Address;
 import com.fch.buffetorder.entity.User;
 
+import java.math.BigDecimal;
+
 /**
  * @program: BuffetOrder
  * @description: 登录服务接口
@@ -10,6 +12,8 @@ import com.fch.buffetorder.entity.User;
  * @create: 2022-10-14 15:30
  **/
 public interface UserService {
+
+    User addMoney(User user, BigDecimal money);
 
     boolean regUser(User user);
 
@@ -32,4 +36,5 @@ public interface UserService {
     String queryUserAvatarByOpenId();
 
     String WeiXinLogin(String code);
+
 }
