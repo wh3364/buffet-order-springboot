@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
  **/
 @Data
 @Component
-@ConfigurationProperties(prefix = "weixin")
+@ConfigurationProperties(prefix = "wx")
 public class WeiXinParam {
     private String APP_ID;
 
