@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.Address;
 import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.service.UserService;
-import com.fch.buffetorder.util.JsonUtil;
 import com.fch.buffetorder.util.UploadImgUtil;
 import com.fch.buffetorder.util.WeiXinParam;
 import lombok.extern.slf4j.Slf4j;
@@ -38,9 +37,6 @@ public class UserController {
     private WeiXinParam weiXinParam;
 
     @Autowired
-    private JsonUtil jsonUtil;
-
-    @Autowired
     private UploadImgUtil uploadImgUtil;
 //    @PostMapping("GetInfo")
 //    public ResponseEntity loginWeiXin(@RequestBody() String openId) {
@@ -60,16 +56,13 @@ public class UserController {
 
     @GetMapping("GetAddress")
     public ResponseEntity addOrUploadAddress(@RequestAttribute("openId") String openId) {
-        if (jsonUtil.needReg(openId)) {
-            return new ResponseEntity(HttpStatus.FORBIDDEN);
-        }
         User user = new User();
         user.setOpenId(openId);
         Address address = userService.getAddressByUserId(user);
         JSONObject resp = new JSONObject();
         resp.put("address", address);
         log.info("查询地址{}", address);
-        return new ResponseEntity(resp, HttpStatus.OK);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
     @PostMapping("AddOrUploadAddress")
@@ -77,9 +70,6 @@ public class UserController {
                                              @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (StringUtils.hasText(jsonObject.getString("address"))) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             User user = new User();
             user.setOpenId(openId);
             Address address = new Address();
@@ -89,7 +79,7 @@ public class UserController {
             JSONObject resp = new JSONObject();
             resp.put("user", user);
             log.info("添加或修改地址{}", user);
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -99,9 +89,6 @@ public class UserController {
                                        @RequestAttribute("openId") String openId,
                                        HttpServletRequest request) {
         if (!file.isEmpty()) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             User user = new User();
             user.setOpenId(openId);
             String avatarPath;
@@ -117,7 +104,7 @@ public class UserController {
             user.setOpenId(null);
             JSONObject resp = new JSONObject();
             resp.put("user", user);
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -127,9 +114,6 @@ public class UserController {
                                      @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (StringUtils.hasText(jsonObject.getString("nick"))) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             User user = new User();
             user.setOpenId(openId);
             user.setNickName(jsonObject.getString("nick"));
@@ -138,7 +122,7 @@ public class UserController {
             JSONObject resp = new JSONObject();
             resp.put("user", user);
             log.info("更新姓名{}", user);
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }

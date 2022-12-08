@@ -26,11 +26,11 @@ public class FoodController {
 
     @GetMapping("GetAllCate")
     public ResponseEntity getAllCate() {
-        return new ResponseEntity(cateService.queryAllCates(), HttpStatus.OK);
+        return new ResponseEntity<>(cateService.queryAllCates(), HttpStatus.OK);
     }
 
     @GetMapping("GetAllFood")
     public ResponseEntity  getAllFoots(){
-        return new ResponseEntity(foodService.queryAllFoods(), HttpStatus.OK);
+        return new ResponseEntity<>(foodService.queryAllFoods(), HttpStatus.OK);
     }
 }

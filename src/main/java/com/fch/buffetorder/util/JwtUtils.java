@@ -89,7 +89,7 @@ public class JwtUtils {
         return Jwts.builder()
                 .setSubject(userName) //填写令牌的用户名
                 .claim("role", role) //填写角色
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRE * 1000 * 60 * 60 * 24)) //有效日期
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRE)) //有效日期
                 .signWith(SignatureAlgorithm.HS512, SECRET) //数字签名
                 .compact();
     }
@@ -101,6 +101,6 @@ public class JwtUtils {
      * @return true:该刷新了 
      */
     public boolean isRefress(Claims token) {
-        return token.getExpiration().before(new Date(System.currentTimeMillis() + EXPECT * 1000 * 60 * 60 * 24));
+        return token.getExpiration().before(new Date(System.currentTimeMillis() + EXPECT));
     }
 }

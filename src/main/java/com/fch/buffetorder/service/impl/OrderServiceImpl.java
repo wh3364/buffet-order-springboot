@@ -3,6 +3,7 @@ package com.fch.buffetorder.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.api.WebNotify;
+import com.fch.buffetorder.config.RabbitConfig;
 import com.fch.buffetorder.entity.*;
 import com.fch.buffetorder.entity.detail.MultiDetail;
 import com.fch.buffetorder.entity.detail.RadioDetail;
@@ -18,6 +19,7 @@ import com.fch.buffetorder.websocket.WebSocket;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,11 +57,14 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     JsonUtil jsonUtil;
 
+    @Autowired
+    RabbitTemplate rabbitTemplate;
+
     @Override
     public JSONObject userCreateOrder(List<OrderBody> orderBodyList, Integer way, User user) {
         JSONObject res = new JSONObject();
         res.put("code", 0);
-        user = userMapper.queryUserIdByOpenId(user);
+        user = userMapper.queryUserByOpenId(user);
         Order order = new Order();
         List<OrderJsonInDb> orderJsonInDbList = new ArrayList<>();
         BigDecimal sum = new BigDecimal(BigInteger.ZERO);
@@ -97,6 +102,11 @@ public class OrderServiceImpl implements OrderService {
         if (orderJsonInDbList.size() == 0) {
             return res;
         }
+        if (user.getMoney().compareTo(sum) < 0) {
+            res.put("code", 2);
+            res.put("msg", "余额不足请充值");
+            return res;
+        }
         if (way == 0) {
             order.setOrderGetNumb(jsonUtil.getOrderGetNum());
         } else if (way == 1) {
@@ -122,13 +132,14 @@ public class OrderServiceImpl implements OrderService {
         if (orderMapper.createOrder(order) > 0) {
             res.put("order", order);
             res.put("code", 1);
-            String title;
-            if (order.getOrderWay() == 0) {
-                title = "有新的店内订单";
-            } else {
-                title = "有新的外卖订单";
-            }
-            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(), title, "订单号:" + order.getOrderId(), WebNotify.Type.INFO, 0, false)));
+            String title = order.getOrderWay() == 0 ? "有新的店内订单" : "有新的外卖订单";
+            webSocket.sendMessage(JSONObject.toJSONString(
+                    new WebNotify(order.getOrderId(),
+                            title, "订单号:" + order.getOrderId(),
+                            WebNotify.Type.INFO,
+                            10000,
+                            false)));
+            rabbitTemplate.convertAndSend(RabbitConfig.ORDER_EXCHANGE, RabbitConfig.ORDER_ROUTING_KEY, order);
         }
         return res;
     }
@@ -213,7 +224,12 @@ public class OrderServiceImpl implements OrderService {
             res.put("code", 1);
             res.put("msg", "支付成功");
             log.info("支付成功 钱{}￥ - 应付{}￥", money, shouldPay);
-            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(), "订单支付成功", "订单号:" + order.getOrderId(), WebNotify.Type.SUCCESS, 0, false)));
+            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(),
+                    "订单支付成功",
+                    "订单号:" + order.getOrderId(),
+                    WebNotify.Type.SUCCESS,
+                    10000,
+                    false)));
 
         }
         return res;
@@ -242,7 +258,12 @@ public class OrderServiceImpl implements OrderService {
             res.put("code", 1);
             res.put("msg", "取消成功");
             log.info("取消成功orderId{}", order.getOrderId());
-            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(), "订单取消", "订单号:" + order.getOrderId(), WebNotify.Type.ERROR, 0, false)));
+            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(),
+                    "订单取消",
+                    "订单号:" + order.getOrderId(),
+                    WebNotify.Type.ERROR,
+                    0,
+                    false)));
         }
         return res;
     }
@@ -270,9 +291,30 @@ public class OrderServiceImpl implements OrderService {
             res.put("code", 1);
             res.put("msg", "完成成功");
             log.info("完成订单orderId{}", order.getOrderId());
-            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(), "订单完成", "订单号:" + order.getOrderId(), WebNotify.Type.SUCCESS, 5000, false)));
+            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(),
+                    "订单完成",
+                    "订单号:" + order.getOrderId(),
+                    WebNotify.Type.SUCCESS,
+                    10000,
+                    false)));
         }
         return res;
+    }
+
+    @Override
+    public void confirmPay(Order order) {
+        order = orderMapper.queryOrderByOrderIdAndUserId(order);
+        if (order.getOrderState() == 0) {
+            order.setOrderState(4);
+            orderMapper.uploadOrderCompleteOrCancel(order);
+            log.info("订单超时自动取消orderId{}", order.getOrderId());
+            webSocket.sendMessage(JSONObject.toJSONString(new WebNotify(order.getOrderId(),
+                    "订单取消",
+                    "订单号:" + order.getOrderId(),
+                    WebNotify.Type.ERROR,
+                    10000,
+                    false)));
+        }
     }
 
     @Override

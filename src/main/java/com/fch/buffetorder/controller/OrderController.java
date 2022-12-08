@@ -42,18 +42,15 @@ public class OrderController {
                                       @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (jsonObject.size() > 0) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             User user = new User();
             user.setOpenId(openId);
-            List<OrderBody> orders = jsonUtil.reqParamJsonToOrderBody(jsonObject.getJSONObject("data"));
-            JSONObject resp = orderService.userCreateOrder(orders, jsonObject.getJSONObject("data").getInteger("way"), user);
+            List<OrderBody> orders = jsonUtil.reqParamJsonToOrderBody(jsonObject);
+            JSONObject resp = orderService.userCreateOrder(orders, jsonObject.getInteger("way"), user);
             if (resp.getInteger("code") == 0) {
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
             log.info("创建订单");
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -63,21 +60,18 @@ public class OrderController {
                                    @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (jsonObject.size() > 0) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             User user = new User();
             user.setOpenId(openId);
             user = userService.queryUserIdByOpenId(user);
             Order order = new Order();
-            Integer orderId = jsonObject.getInteger("orderId");
-            order.setOrderId(orderId);
+            order.setOrderId(jsonObject.getInteger("orderId"));
             order.setUserId(user.getUserId());
             order = orderService.queryOrderByOrderIdAndUserId(order);
             JSONObject resp = new JSONObject();
             resp.put("order", order);
+            resp.put("time", order.getOrderCreateTime().getTime());
             log.info("查询订单");
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -89,9 +83,6 @@ public class OrderController {
                                            @RequestParam(value = "pageSize", required = false, defaultValue = "5") Integer pageSize) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (jsonObject.size() > 0) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             Integer orderState = jsonObject.getInteger("orderState");
             User user = new User();
             user.setOpenId(openId);
@@ -103,7 +94,7 @@ public class OrderController {
             JSONObject resp = new JSONObject();
             resp.put("orders", orders);
             log.info("查询订单列表");
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -113,19 +104,16 @@ public class OrderController {
                                    @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (jsonObject.size() > 0) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             User user = new User();
             user.setOpenId(openId);
             user = userService.queryUserIdByOpenId(user);
             user.setOpenId(openId);
             Order order = new Order();
             order.setUserId(user.getUserId());
-            order.setOrderId(jsonObject.getInteger("openId"));
+            order.setOrderId(jsonObject.getInteger("orderId"));
             JSONObject resp = orderService.payOrder(order, user);
             log.info("支付订单");
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -135,19 +123,16 @@ public class OrderController {
                                       @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (jsonObject.size() > 0) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             User user = new User();
             user.setOpenId(openId);
             user = userService.queryUserIdByOpenId(user);
             user.setOpenId(openId);
             Order order = new Order();
             order.setUserId(user.getUserId());
-            order.setOrderId(jsonObject.getInteger("openId"));
+            order.setOrderId(jsonObject.getInteger("orderId"));
             JSONObject resp = orderService.cancelOrder(order, user);
             log.info("取消订单");
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -156,19 +141,16 @@ public class OrderController {
                                         @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         if (jsonObject.size() > 0) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             User user = new User();
             user.setOpenId(openId);
             user = userService.queryUserIdByOpenId(user);
             user.setOpenId(openId);
             Order order = new Order();
             order.setUserId(user.getUserId());
-            order.setOrderId(jsonObject.getInteger("openId"));
+            order.setOrderId(jsonObject.getInteger("orderId"));
             JSONObject resp = orderService.completeOrder(order, user);
             log.info("完成订单");
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }

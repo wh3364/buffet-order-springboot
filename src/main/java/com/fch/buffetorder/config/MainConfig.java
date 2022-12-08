@@ -26,8 +26,8 @@ public class MainConfig {
 
     /**
      * 注入请求模板
-     * @param factory
-     * @return
+     * @param factory factory
+     * @return RestTemplate
      */
     @Bean
     public RestTemplate restTemplate(ClientHttpRequestFactory factory) {
@@ -36,7 +36,7 @@ public class MainConfig {
 
     /**
      * 这里配置请求
-     * @return
+     * @return ClientHttpRequestFactory
      */
     @Bean
     public ClientHttpRequestFactory simpleClientHttpRequestFactory() {

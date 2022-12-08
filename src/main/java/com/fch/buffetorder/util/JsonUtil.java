@@ -3,12 +3,9 @@ package com.fch.buffetorder.util;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.Food;
-import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.entity.detail.MultiDetail;
 import com.fch.buffetorder.entity.detail.RadioDetail;
 import com.fch.buffetorder.entity.orderbody.OrderBody;
-import com.fch.buffetorder.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,10 +20,6 @@ import java.util.List;
 public class JsonUtil {
 
     private static Integer orderNum = 0;
-
-    @Autowired
-    private UserService userService;
-
 
 //    public JSONObject filterRequestJson(String json){
 //        JSONObject req = JSONObject.parseObject(json);
@@ -71,12 +64,6 @@ public class JsonUtil {
 //        res.put("msg", "参数错误");
 //        return res;
 //    }
-
-    public boolean needReg(String openId){
-        User user = new User();
-        user.setOpenId(openId);
-        return !userService.isExistByOpenId(user);
-    }
 
     /**
      * 获得请求参数的菜单Json

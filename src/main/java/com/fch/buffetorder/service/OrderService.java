@@ -31,10 +31,11 @@ public interface OrderService {
 
     JSONObject completeOrder(Order order, User user);
 
+    void confirmPay(Order order);
+
     PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Date[] createTime, Integer pageNum, Integer pageSize);
 
     Order adminQueryOrderByOrderId(Order order);
 
     JSONObject goFood(Order order);
-
 }

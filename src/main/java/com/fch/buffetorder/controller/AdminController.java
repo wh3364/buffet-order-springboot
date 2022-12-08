@@ -8,7 +8,6 @@ import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.service.FoodService;
 import com.fch.buffetorder.util.UploadImgUtil;
 import com.fch.buffetorder.util.WeiXinParam;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +24,6 @@ import java.io.IOException;
  * @CreatedBy: fch
  * @create: 2022-11-03 13:52
  **/
-@Slf4j
-@CrossOrigin
 @RestController
 @RequestMapping("Admin")
 public class AdminController {
@@ -44,7 +41,7 @@ public class AdminController {
 
     @GetMapping("GetAllCates")
     public ResponseEntity getAllCates() {
-        return new ResponseEntity(cateService.adminQueryAllCates(), HttpStatus.OK);
+        return new ResponseEntity<>(cateService.adminQueryAllCates(), HttpStatus.OK);
     }
 
     @PostMapping("UpdateCate")
@@ -55,7 +52,7 @@ public class AdminController {
         if (cate.getCateWeight() == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(cateService.updateCate(cate), HttpStatus.OK);
+        return new ResponseEntity<>(cateService.updateCate(cate), HttpStatus.OK);
     }
 
     @PostMapping("AddCate")
@@ -68,11 +65,11 @@ public class AdminController {
         if (cate.getCateWeight() == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(cateService.addCate(cate), HttpStatus.OK);
+        return new ResponseEntity<>(cateService.addCate(cate), HttpStatus.OK);
     }
 
     @GetMapping("GetAllFoods")
-    public ResponseEntity getAllFoods() { return new ResponseEntity(foodService.adminQueryAllFoods(), HttpStatus.OK); }
+    public ResponseEntity getAllFoods() { return new ResponseEntity<>(foodService.adminQueryAllFoods(), HttpStatus.OK); }
 
     @PostMapping("UpdateFoodImg")
     public ResponseEntity updateFoodImg(@RequestParam("File") MultipartFile file,
@@ -84,7 +81,7 @@ public class AdminController {
         if (!foodService.isExistsByFoodId(food) || file.isEmpty()){
             res.put("code", 500);
             res.put("message", "还未创建食物或图片为空");
-            return new ResponseEntity(res, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         }
         String imgPath;
         try {
@@ -92,27 +89,27 @@ public class AdminController {
         } catch (IOException e) {
             res.put("code", 500);
             res.put("message", "上传图片失败");
-            return new ResponseEntity(res, HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         }
         res = foodService.updateFoodImg(foodId, imgPath);
-        return new ResponseEntity(res, HttpStatus.OK);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @PostMapping("UpdateFood")
     public ResponseEntity updateFood(@RequestBody Food food) {
         JSONObject res = foodService.updateFood(food);
-       return new ResponseEntity(res, HttpStatus.OK);
+       return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @PostMapping("AddFood")
     public ResponseEntity addFood(@RequestBody Food food) {
         JSONObject res = foodService.addFood(food);
-        return new ResponseEntity(res, HttpStatus.OK);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @GetMapping("GetAllDetails")
     public ResponseEntity getAllDetails() {
-        return new ResponseEntity(foodService.queryAllDefault(), HttpStatus.OK);
+        return new ResponseEntity<>(foodService.queryAllDefault(), HttpStatus.OK);
     }
 
     @PostMapping("UpdateDetail")
@@ -120,7 +117,7 @@ public class AdminController {
         if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(foodService.updateDetail(detail), HttpStatus.OK);
+        return new ResponseEntity<>(foodService.updateDetail(detail), HttpStatus.OK);
     }
 
     @PostMapping("AddDetail")
@@ -128,7 +125,7 @@ public class AdminController {
         if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(foodService.addDetail(detail), HttpStatus.OK);
+        return new ResponseEntity<>(foodService.addDetail(detail), HttpStatus.OK);
     }
 
     @PostMapping("DeleteDetail")
@@ -136,7 +133,7 @@ public class AdminController {
         if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(foodService.deleteDetail(detail), HttpStatus.OK);
+        return new ResponseEntity<>(foodService.deleteDetail(detail), HttpStatus.OK);
     }
 
 }

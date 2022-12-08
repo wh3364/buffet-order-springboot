@@ -36,14 +36,12 @@ public class OpenIdUtil {
                 res.put("openId", "");
                 res.put("msg", JSONObject.parseObject(responseEntity.getBody()).getString("errmsg"));
             } else {
-                //rides中从这里加
+                // 成功获取openId
                 res.put("flag", true);
                 res.put("session_key", JSONObject.parseObject(responseEntity.getBody()).getString("session_key"));
                 res.put("openId", JSONObject.parseObject(responseEntity.getBody()).getString("openid"));
                 res.put("msg", "成功获得openId");
-                redisUtil.setStr(res.getString("session_key"), res.getString("openId"), 60L * 60L * 2L);
-//                RBucket<String> sessionKey = redissonClient.getBucket(res.getString("session_key"));
-//                sessionKey.set(res.getString("openId"), 60L, TimeUnit.SECONDS);
+                redisUtil.setStr(res.getString("session_key"), res.getString("openId"), 60L * 60L);
             }
             return res;
         }
@@ -54,7 +52,6 @@ public class OpenIdUtil {
 
 
     public String getOpenIdFromSession(String sessionKey) {
-        //RBucket<String> openId = redissonClient.getBucket(sessionKey);
         return redisUtil.getStr(sessionKey);
     }
 

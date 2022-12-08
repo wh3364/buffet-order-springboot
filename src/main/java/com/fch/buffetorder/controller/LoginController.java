@@ -3,7 +3,6 @@ package com.fch.buffetorder.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.service.UserService;
-import com.fch.buffetorder.util.JsonUtil;
 import com.fch.buffetorder.util.OpenIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,14 +33,13 @@ public class LoginController {
     @Autowired
     private OpenIdUtil openIdUtil;
 
-    @Autowired
-    private JsonUtil jsonUtil;
-
     @PostMapping("RegUser")
-    public ResponseEntity regUser(@RequestAttribute("openId") String openId) {
-        if (StringUtils.hasText(openId)) {
+    public ResponseEntity regUser(HttpServletRequest request) {
+        String code = request.getHeader("code");
+        JSONObject openIdres = openIdUtil.getOpenId(code);
+        if (openIdres.getBoolean("flag") && StringUtils.hasText(openIdres.getString("openId"))) {
             User user = new User();
-            user.setOpenId(openId);
+            user.setOpenId(openIdres.getString("openId"));
             if (!userService.isExistByOpenId(user)) {
                 userService.regUser(user);
             }
@@ -48,7 +47,7 @@ public class LoginController {
             JSONObject resp = new JSONObject();
             resp.put("user", user);
             log.info("注册用户{}", user);
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
@@ -56,9 +55,6 @@ public class LoginController {
     @PostMapping("LoginUser")
     public ResponseEntity loginUser(@RequestAttribute("openId") String openId) {
         if (StringUtils.hasText(openId)) {
-            if (jsonUtil.needReg(openId)) {
-                return new ResponseEntity(HttpStatus.FORBIDDEN);
-            }
             User user = new User();
             user.setOpenId(openId);
             user = userService.getUserByOpenId(user);
@@ -66,21 +62,20 @@ public class LoginController {
             user.setOpenId(null);
             resp.put("user", user);
             log.info("登录用户{}", user);
-            return new ResponseEntity(resp, HttpStatus.OK);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
 
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
     }
 
-    @PostMapping("Test")
-    public ResponseEntity testRides(@RequestBody String json) {
-
-        return new ResponseEntity(openIdUtil.getOpenIdFromSession(JSONObject.parseObject(json).getString("session_key")), HttpStatus.OK);
-    }
+//    @PostMapping("Test")
+//    public ResponseEntity testRides(@RequestBody String json) {
+//        return new ResponseEntity(openIdUtil.getOpenIdFromSession(JSONObject.parseObject(json).getString("session_key")), HttpStatus.OK);
+//    }
 
     /**
-     * 根据微信更新昵称和头像(马上废弃)
+     * 根据微信更新昵称和头像
      *
      * @param json
      * @return
@@ -123,9 +118,9 @@ public class LoginController {
             Map<String, Object> map = new HashMap<>();
             map.put("msg", msg);
             map.put("user", user);
-            return new ResponseEntity(map, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(map, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         log.info("更新用户信息成功{}", user);
-        return new ResponseEntity(user, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

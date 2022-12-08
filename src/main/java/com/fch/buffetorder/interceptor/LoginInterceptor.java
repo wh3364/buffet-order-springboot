@@ -1,6 +1,9 @@
 package com.fch.buffetorder.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.entity.User;
+import com.fch.buffetorder.service.UserService;
+import com.fch.buffetorder.util.JsonUtil;
 import com.fch.buffetorder.util.OpenIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +24,12 @@ import java.io.PrintWriter;
  **/
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
+
     @Autowired
     private OpenIdUtil openIdUtil;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -31,13 +38,15 @@ public class LoginInterceptor implements HandlerInterceptor {
         String session_key = request.getHeader("session_key");
         String code = request.getHeader("code");
         if (StringUtils.hasText(session_key)) {
-            log.info("session_key:{}", session_key);
             String openId = openIdUtil.getOpenIdFromSession(session_key);
             if (StringUtils.hasText(openId)) {
+                if (needReg(openId)){
+                    response.setStatus(403);
+                    return false;
+                }
                 request.setAttribute("openId", openId);
-                //request.setAttribute("session_key", session_key);
                 response.setHeader("session_key", session_key);
-                log.info("通过session_key登录");
+                log.info("通过session_key登录 session_key:{}", session_key);
                 return true;
             } else {
                 response.setStatus(401);
@@ -47,12 +56,14 @@ public class LoginInterceptor implements HandlerInterceptor {
         }
         if (StringUtils.hasText(code)) {
             JSONObject openIdres = openIdUtil.getOpenId(code);
-            log.info("code:{}", code);
             if (openIdres.getBoolean("flag")) {
+                if (needReg(openIdres.getString("openId"))){
+                    response.setStatus(403);
+                    return false;
+                }
                 request.setAttribute("openId", openIdres.getString("openId"));
-                //request.setAttribute("session_key", openIdres.getString("session_key"));
                 response.setHeader("session_key", openIdres.getString("session_key"));
-                log.info("通过code登录");
+                log.info("通过code登录 code:{}", code);
                 return true;
             } else {
                 response.setStatus(408);
@@ -68,13 +79,19 @@ public class LoginInterceptor implements HandlerInterceptor {
         return false;
     }
 
+    private boolean needReg(String openId){
+        User user = new User();
+        user.setOpenId(openId);
+        return !userService.isExistByOpenId(user);
+    }
+
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        //log.info("执行了postHandle（）");
+        //log.info("执行了postHandle");
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        //log.info("执行了afterCompletion（）");
+        //log.info("执行了afterCompletion");
     }
 }

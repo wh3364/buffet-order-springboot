@@ -1,6 +1,5 @@
 package com.fch.buffetorder.controller;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.Order;
 import com.fch.buffetorder.service.AdminService;
@@ -39,7 +38,7 @@ public class AssistantController {
 
     @GetMapping("Info")
     public ResponseEntity getAdminInfo(HttpServletRequest request) {
-        return new ResponseEntity(adminService.getInfo(request.getHeader("token")), HttpStatus.OK);
+        return new ResponseEntity<>(adminService.getInfo(request.getHeader("token")), HttpStatus.OK);
     }
 
     @PostMapping("Logout")
@@ -47,32 +46,7 @@ public class AssistantController {
         JSONObject resp = new JSONObject();
         resp.put("code", 200);
         resp.put("data", "success");
-        return new ResponseEntity(resp, HttpStatus.OK);
-    }
-
-    /**
-     * 这是一个测试接口
-     *
-     * @return
-     */
-    @GetMapping("List")
-    public ResponseEntity getList() {
-        JSONArray rs = new JSONArray();
-        JSONObject r = new JSONObject();
-        JSONObject data = new JSONObject();
-        r.put("id", "id");
-        r.put("title", "title");
-        r.put("author", "author");
-        r.put("display_time", "display_time");
-        r.put("pageviews", "pageviews");
-        r.put("status", "published");
-        rs.add(r);
-        JSONObject resp = new JSONObject();
-        resp.put("code", 200);
-        data.put("total", 1);
-        data.put("items", rs);
-        resp.put("data", data);
-        return new ResponseEntity(resp, HttpStatus.OK);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
     @GetMapping("GetOrderList")
@@ -92,7 +66,7 @@ public class AssistantController {
         JSONObject resp = new JSONObject();
         resp.put("code", 200);
         resp.put("data", orders);
-        return new ResponseEntity(resp, HttpStatus.OK);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
     @GetMapping("GetOrder")
@@ -109,7 +83,7 @@ public class AssistantController {
         JSONObject resp = new JSONObject();
         resp.put("code", 200);
         resp.put("data", order);
-        return new ResponseEntity(resp, HttpStatus.OK);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
     @PostMapping("GoFood")
@@ -118,6 +92,6 @@ public class AssistantController {
         order.setOrderId(orderId);
         order.setUserId(userId);
         JSONObject resp = orderService.goFood(order);
-        return new ResponseEntity(resp, HttpStatus.OK);
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 }
