@@ -304,6 +304,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void confirmPay(Order order) {
         order = orderMapper.queryOrderByOrderIdAndUserId(order);
+        if (order == null)
+            return;
         if (order.getOrderState() == 0) {
             order.setOrderState(4);
             orderMapper.uploadOrderCompleteOrCancel(order);

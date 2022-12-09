@@ -3,8 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-**/src/main/resources/static/img/avatar/
-**/src/main/resources/static/img/foot/
+**/src/main/resources/application.yml
 
 ### STS ###
 .apt_generated
