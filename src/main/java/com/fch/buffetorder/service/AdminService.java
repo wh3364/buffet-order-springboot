@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.Admin;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+import java.util.List;
+
 /**
  * @program: BuffetOrder
  * @description:
@@ -15,4 +17,6 @@ public interface AdminService extends UserDetailsService {
     Admin insertAdmin(Admin admin);
 
     JSONObject getInfo(String token);
+
+    JSONObject queryAllAdminInfo();
 }

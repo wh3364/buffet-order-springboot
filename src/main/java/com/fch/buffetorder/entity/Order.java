@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 public class Order {
 
-    private Integer orderId;
+    private String orderId;
     private Integer userId;
     private Integer orderWay;
     private String orderAddress;

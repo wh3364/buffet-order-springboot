@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Random;
+
 /**
  * @program: BuffetOrder
  * @description: 获得微信的openid
@@ -41,7 +43,7 @@ public class OpenIdUtil {
                 res.put("session_key", JSONObject.parseObject(responseEntity.getBody()).getString("session_key"));
                 res.put("openId", JSONObject.parseObject(responseEntity.getBody()).getString("openid"));
                 res.put("msg", "成功获得openId");
-                redisUtil.setStr(res.getString("session_key"), res.getString("openId"), 60L * 60L);
+                redisUtil.setStr(res.getString("session_key"), res.getString("openId"), 1000 * 60 * 60 * 2L);
             }
             return res;
         }

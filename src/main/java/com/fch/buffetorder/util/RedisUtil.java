@@ -4,6 +4,7 @@ import org.redisson.api.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -17,7 +18,7 @@ public class RedisUtil {
     /**
      * 默认缓存时间
      */
-    private static final Long DEFAULT_EXPIRED = 32000L;
+    private static final Long DEFAULT_EXPIRED = 1000 * 60 * 60L;
 
 
     /**
@@ -67,7 +68,6 @@ public class RedisUtil {
         return bucket.get();
     }
 
-
     /**
      * 缓存字符串
      *
@@ -89,7 +89,7 @@ public class RedisUtil {
      */
     public void setStr(String key, String value, long expired) {
         RBucket<String> bucket = redissonClient.getBucket(key);
-        bucket.set(value, expired <= 0L ? DEFAULT_EXPIRED : expired, TimeUnit.SECONDS);
+        bucket.set(value, expired <= 0L ? DEFAULT_EXPIRED : expired, TimeUnit.MILLISECONDS);
     }
 
 
@@ -102,7 +102,7 @@ public class RedisUtil {
      */
     public Boolean setIfAbsent(String key, String value, long expired) {
         RBucket<String> bucket = redissonClient.getBucket(key);
-        return bucket.trySet(value, expired <= 0L ? DEFAULT_EXPIRED : expired, TimeUnit.SECONDS);
+        return bucket.trySet(value, expired <= 0L ? DEFAULT_EXPIRED : expired, TimeUnit.MILLISECONDS);
     }
 
 
@@ -171,5 +171,24 @@ public class RedisUtil {
      */
     public <T> RScoredSortedSet<T> getScoredSortedSet(String key) {
         return redissonClient.getScoredSortedSet(key);
+    }
+
+    public <T> T getObj(String key) {
+        RBucket<T> bucket = redissonClient.getBucket(key);
+        return bucket.get();
+    }
+
+    public void setObj(String key, Object value) {
+        RBucket<Object> bucket = redissonClient.getBucket(key);
+        bucket.set(value);
+    }
+
+    public Boolean setIfAbsent(String key, Object value, long expired) {
+        RBucket<Object> bucket = redissonClient.getBucket(key);
+        return bucket.trySet(value, expired <= 0L ? DEFAULT_EXPIRED : expired, TimeUnit.MILLISECONDS);
+    }
+
+    public Boolean updateTTLByInstant(String key, Instant time) {
+        return redissonClient.getBucket(key).expire(time);
     }
 }

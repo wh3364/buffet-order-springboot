@@ -10,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * @program: BuffetOrder
@@ -19,6 +23,7 @@ import org.springframework.util.StringUtils;
  * @create: 2022-10-31 19:23
  **/
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class AdminServiceImpl implements AdminService {
 
     @Autowired
@@ -28,6 +33,7 @@ public class AdminServiceImpl implements AdminService {
     JwtUtils jwtUtils;
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Admin admin = adminMapper.findAdminByUsername(username);
         if (admin == null) {
@@ -47,11 +53,15 @@ public class AdminServiceImpl implements AdminService {
         if (!StringUtils.hasText(newAdmin.getRole())) {
             newAdmin.setRole("assistant");
         }
-        adminMapper.insertAdmin(newAdmin);
-        return newAdmin;
+        if (adminMapper.insertAdmin(newAdmin) > 0) {
+            return newAdmin;
+        } else {
+            return null;
+        }
     }
 
     @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public JSONObject getInfo(String token) {
         JSONObject res = new JSONObject();
         res.put("code", 0);
@@ -71,6 +81,19 @@ public class AdminServiceImpl implements AdminService {
             res.put("data", admin);
             res.put("code", 200);
             return res;
+        }
+        return res;
+    }
+
+    @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    public JSONObject queryAllAdminInfo() {
+        JSONObject res = new JSONObject(2);
+        if (adminMapper.queryAllAdminInfo() != null) {
+            res.put("code", 200);
+            res.put("data", adminMapper.queryAllAdminInfo());
+        } else {
+            res.put("code", 0);
         }
         return res;
     }

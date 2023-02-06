@@ -7,6 +7,8 @@ import com.fch.buffetorder.mapper.UserMapper;
 import com.fch.buffetorder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -17,6 +19,7 @@ import java.math.BigDecimal;
  * @create: 2022-10-14 15:31
  **/
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
 
     @Autowired
@@ -49,6 +52,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public Address getAddressByUserId(User user) {
         user = userMapper.queryUserIdByOpenId(user);
         Address address = new Address();
@@ -100,6 +104,7 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public boolean isExistByOpenId(User user) {
         try {
             User u = userMapper.queryUserByOpenId(user);
@@ -113,6 +118,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public User getUserByOpenId(User user) {
         try {
             return userMapper.queryUserByOpenId(user);
@@ -123,6 +129,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public User queryUserIdByOpenId(User user) {
         return userMapper.queryUserIdByOpenId(user);
     }

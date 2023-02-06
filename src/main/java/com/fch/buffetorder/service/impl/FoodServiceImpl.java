@@ -8,10 +8,14 @@ import com.fch.buffetorder.entity.detail.MultiDetail;
 import com.fch.buffetorder.entity.detail.RadioDetail;
 import com.fch.buffetorder.mapper.FoodMapper;
 import com.fch.buffetorder.service.FoodService;
+import com.fch.buffetorder.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @program: BuffetOrder
@@ -20,17 +24,32 @@ import java.util.List;
  * @create: 2022-10-16 23:22
  **/
 @Service
+@Transactional(rollbackFor = Exception.class)
 public class FoodServiceImpl implements FoodService {
+
+    public static final String ALL_FOODS_KEY = "buffetorder.food.foods";
 
     @Autowired
     FoodMapper foodMapper;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public List<Food> queryAllFoods() {
-        return foodMapper.queryAllFoods();
+        String foodsJson = Optional
+                .ofNullable(redisUtil.getStr(ALL_FOODS_KEY))
+                .orElseGet(() -> {
+                    String json = JSONObject.toJSONString(foodMapper.queryAllFoods());
+                    redisUtil.setStr(ALL_FOODS_KEY, json, 1000 * 60 * 60);
+                    return json;
+                });
+        return JSONArray.parseArray(foodsJson, Food.class);
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public JSONObject adminQueryAllFoods() {
         JSONObject res = new JSONObject();
         List<Food> foods = foodMapper.adminQueryAllFoods();
@@ -45,6 +64,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public boolean isExistsByFoodId(Food food) {
         return foodMapper.queryFoodById(food) != null;
     }
@@ -69,9 +89,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public JSONObject updateFood(Food food) {
         JSONObject res = new JSONObject();
-        if (food.getHaveDetail() == 0) {
-            return getUpdateRes(food, res);
-        } else {
+        if (food.getHaveDetail() == 1) {
             String foodDetailStr = food.getFoodDetail();
             JSONObject foodDetail;
             try {
@@ -88,16 +106,43 @@ public class FoodServiceImpl implements FoodService {
             } else {
                 food.setFoodDetail(foodDetail.toJSONString());
             }
-            return getUpdateRes(food, res);
         }
+        if (foodMapper.updateFood(food) > 0) {
+            res.put("data", food);
+            res.put("code", 200);
+        } else {
+            res.put("code", 0);
+            res.put("message", "更新失败");
+        }
+        return res;
+
+//        if (food.getHaveDetail() == 0) {
+//            return getUpdateRes(food, res);
+//        } else {
+//            String foodDetailStr = food.getFoodDetail();
+//            JSONObject foodDetail;
+//            try {
+//                foodDetail = getFoodDetail(foodDetailStr);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                res.put("message", "修改失败");
+//                res.put("code", 0);
+//                return res;
+//            }
+//            if (foodDetail == null) {
+//                food.setHaveDetail(0);
+//                food.setFoodDetail(null);
+//            } else {
+//                food.setFoodDetail(foodDetail.toJSONString());
+//            }
+//            return getUpdateRes(food, res);
+//        }
     }
 
     @Override
     public JSONObject addFood(Food food) {
         JSONObject res = new JSONObject();
-        if (food.getHaveDetail() == 0) {
-            return getAddRes(food, res);
-        } else {
+        if (food.getHaveDetail() == 1) {
             String foodDetailStr = food.getFoodDetail();
             JSONObject foodDetail;
             try {
@@ -114,11 +159,39 @@ public class FoodServiceImpl implements FoodService {
             } else {
                 food.setFoodDetail(foodDetail.toJSONString());
             }
-            return getAddRes(food, res);
         }
+        if (foodMapper.addFood(food) > 0) {
+            res.put("code", 200);
+        } else {
+            res.put("code", 0);
+            res.put("message", "添加失败");
+        }
+        return res;
+//        if (food.getHaveDetail() == 0) {
+//            return getAddRes(food, res);
+//        } else {
+//            String foodDetailStr = food.getFoodDetail();
+//            JSONObject foodDetail;
+//            try {
+//                foodDetail = getFoodDetail(foodDetailStr);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                res.put("message", "添加失败");
+//                res.put("code", 0);
+//                return res;
+//            }
+//            if (foodDetail == null) {
+//                food.setHaveDetail(0);
+//                food.setFoodDetail(null);
+//            } else {
+//                food.setFoodDetail(foodDetail.toJSONString());
+//            }
+//            return getAddRes(food, res);
+//        }
     }
 
     @Override
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public JSONObject queryAllDefault() {
         JSONObject res = new JSONObject();
         List<Detail> details = foodMapper.queryAllDetail();
@@ -135,10 +208,10 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public JSONObject updateDetail(Detail detail) {
         JSONObject res = new JSONObject();
-        if (foodMapper.updateDetail(detail) > 0){
+        if (foodMapper.updateDetail(detail) > 0) {
             res.put("data", detail);
             res.put("code", 200);
-        }else {
+        } else {
             res.put("massage", "修改失败");
             res.put("code", 0);
         }
@@ -148,10 +221,10 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public JSONObject addDetail(Detail detail) {
         JSONObject res = new JSONObject();
-        if (foodMapper.addDetail(detail) > 0){
+        if (foodMapper.addDetail(detail) > 0) {
             res.put("data", detail);
             res.put("code", 200);
-        }else {
+        } else {
             res.put("massage", "添加失败");
             res.put("code", 0);
         }
@@ -161,10 +234,10 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public JSONObject deleteDetail(Detail detail) {
         JSONObject res = new JSONObject();
-        if (foodMapper.deleteDetail(detail) > 0){
+        if (foodMapper.deleteDetail(detail) > 0) {
             res.put("data", detail);
             res.put("code", 200);
-        }else {
+        } else {
             res.put("massage", "删除失败");
             res.put("code", 0);
         }
@@ -190,24 +263,24 @@ public class FoodServiceImpl implements FoodService {
         return foodDetail;
     }
 
-    private JSONObject getAddRes(Food food, JSONObject res) {
-        if (foodMapper.addFood(food) > 0) {
-            res.put("code", 200);
-        } else {
-            res.put("code", 0);
-            res.put("message", "添加失败");
-        }
-        return res;
-    }
+//    private JSONObject getAddRes(Food food, JSONObject res) {
+//        if (foodMapper.addFood(food) > 0) {
+//            res.put("code", 200);
+//        } else {
+//            res.put("code", 0);
+//            res.put("message", "添加失败");
+//        }
+//        return res;
+//    }
 
-    private JSONObject getUpdateRes(Food food, JSONObject res) {
-        if (foodMapper.updateFood(food) > 0) {
-            res.put("data", food);
-            res.put("code", 200);
-        } else {
-            res.put("code", 0);
-            res.put("message", "更新失败");
-        }
-        return res;
-    }
+//    private JSONObject getUpdateRes(Food food, JSONObject res) {
+//        if (foodMapper.updateFood(food) > 0) {
+//            res.put("data", food);
+//            res.put("code", 200);
+//        } else {
+//            res.put("code", 0);
+//            res.put("message", "更新失败");
+//        }
+//        return res;
+//    }
 }

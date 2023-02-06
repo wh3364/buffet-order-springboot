@@ -10,14 +10,14 @@ import lombok.Data;
  **/
 @Data
 public class WebNotify {
-    private Integer orderId;
+    private String orderId;
     private String title;
     private String message;
     private String type;
     private Integer duration;
     private boolean dangerouslyUseHTMLString;
 
-    public WebNotify(Integer orderId, String title, String message, Type type, Integer duration, boolean dangerouslyUseHTMLString) {
+    public WebNotify(String orderId, String title, String message, Type type, Integer duration, boolean dangerouslyUseHTMLString) {
         this.orderId = orderId;
         this.title = title;
         this.message = message;

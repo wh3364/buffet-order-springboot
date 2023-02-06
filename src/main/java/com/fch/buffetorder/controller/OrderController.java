@@ -64,7 +64,7 @@ public class OrderController {
             user.setOpenId(openId);
             user = userService.queryUserIdByOpenId(user);
             Order order = new Order();
-            order.setOrderId(jsonObject.getInteger("orderId"));
+            order.setOrderId(jsonObject.getString("orderId"));
             order.setUserId(user.getUserId());
             order = orderService.queryOrderByOrderIdAndUserId(order);
             JSONObject resp = new JSONObject();
@@ -110,7 +110,7 @@ public class OrderController {
             user.setOpenId(openId);
             Order order = new Order();
             order.setUserId(user.getUserId());
-            order.setOrderId(jsonObject.getInteger("orderId"));
+            order.setOrderId(jsonObject.getString("orderId"));
             JSONObject resp = orderService.payOrder(order, user);
             log.info("支付订单");
             return new ResponseEntity<>(resp, HttpStatus.OK);
@@ -129,7 +129,7 @@ public class OrderController {
             user.setOpenId(openId);
             Order order = new Order();
             order.setUserId(user.getUserId());
-            order.setOrderId(jsonObject.getInteger("orderId"));
+            order.setOrderId(jsonObject.getString("orderId"));
             JSONObject resp = orderService.cancelOrder(order, user);
             log.info("取消订单");
             return new ResponseEntity<>(resp, HttpStatus.OK);
@@ -147,7 +147,7 @@ public class OrderController {
             user.setOpenId(openId);
             Order order = new Order();
             order.setUserId(user.getUserId());
-            order.setOrderId(jsonObject.getInteger("orderId"));
+            order.setOrderId(jsonObject.getString("orderId"));
             JSONObject resp = orderService.completeOrder(order, user);
             log.info("完成订单");
             return new ResponseEntity<>(resp, HttpStatus.OK);

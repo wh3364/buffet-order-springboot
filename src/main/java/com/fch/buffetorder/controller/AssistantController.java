@@ -70,7 +70,7 @@ public class AssistantController {
     }
 
     @GetMapping("GetOrder")
-    public ResponseEntity getOrder(@RequestParam Integer orderId,
+    public ResponseEntity getOrder(@RequestParam String orderId,
                                    @RequestParam(required = false, defaultValue = "-1") Integer userId) {
         Order order = new Order();
         order.setOrderId(orderId);
@@ -87,7 +87,7 @@ public class AssistantController {
     }
 
     @PostMapping("GoFood")
-    public ResponseEntity goFood(@RequestParam Integer orderId, @RequestParam Integer userId) {
+    public ResponseEntity goFood(@RequestParam String orderId, @RequestParam Integer userId) {
         Order order = new Order();
         order.setOrderId(orderId);
         order.setUserId(userId);

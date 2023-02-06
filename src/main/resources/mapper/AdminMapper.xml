@@ -39,4 +39,14 @@
                  JOIN role r on admin.role = r.role_id
         WHERE username = #{username}
     </select>
+
+    <select id="queryAllAdminInfo" resultType="Admin">
+        SELECT admin_id,
+               username,
+               r.role,
+               is_enable
+        FROM admin
+                 JOIN role r on admin.role = r.role_id
+        WHERE r.role_id = 1
+    </select>
 </mapper>

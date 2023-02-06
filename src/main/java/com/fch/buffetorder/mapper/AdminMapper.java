@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @program: BuffetOrder
  * @description:
@@ -19,4 +21,6 @@ public interface AdminMapper {
     Admin queryAdminByUsername(Admin admin);
 
     Admin findAdminByUsername(@Param("username")String username);
+
+    List<Admin> queryAllAdminInfo();
 }

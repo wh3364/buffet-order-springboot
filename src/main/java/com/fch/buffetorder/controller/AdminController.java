@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.Cate;
 import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
+import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.service.FoodService;
 import com.fch.buffetorder.util.UploadImgUtil;
@@ -28,16 +29,19 @@ import java.io.IOException;
 @RequestMapping("Admin")
 public class AdminController {
     @Autowired
-    CateService cateService;
+    private CateService cateService;
 
     @Autowired
-    FoodService foodService;
+    private FoodService foodService;
 
     @Autowired
-    UploadImgUtil uploadImgUtil;
+    private AdminService adminService;
 
     @Autowired
-    WeiXinParam weiXinParam;
+    private UploadImgUtil uploadImgUtil;
+
+    @Autowired
+    private WeiXinParam weiXinParam;
 
     @GetMapping("GetAllCates")
     public ResponseEntity getAllCates() {
@@ -134,6 +138,11 @@ public class AdminController {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(foodService.deleteDetail(detail), HttpStatus.OK);
+    }
+
+    @GetMapping("QueryAllAdminInfo")
+    public ResponseEntity queryAllAdminInfo() {
+        return new ResponseEntity<>(adminService.queryAllAdminInfo(), HttpStatus.OK);
     }
 
 }
