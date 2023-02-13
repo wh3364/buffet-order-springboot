@@ -3,7 +3,6 @@ package com.fch.buffetorder.interceptor;
 import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.service.UserService;
-import com.fch.buffetorder.util.JsonUtil;
 import com.fch.buffetorder.util.OpenIdUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

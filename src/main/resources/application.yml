@@ -1,5 +1,5 @@
 server:
-  address: 0.0.0.0
+  address: localhost
   port: 8080
   servlet:
     context-path: /BuffetOrder
@@ -12,6 +12,8 @@ mybatis:
 
 #数据库链接
 spring:
+  profiles:
+    active: wx
   datasource:
     url: jdbc:mysql://localhost:3306/buffet_order?serverTimezone=Asia/Shanghai&characterEncoding=utf-8
     username: root
@@ -57,7 +59,6 @@ spring:
     resources:
       static-locations: classpath:/templates/,classpath:/static/
 
-
 ##redisson 配置
 redisson:
   host:
@@ -71,14 +72,6 @@ jwt:
   # 剩余时间刷新（ms）
   expect: 86400000
 
-
-#微信配置
-wx:
-  app-id:
-  app-secret:
-  grant-type: authorization_code
-  img-path: http://localhost:8080/BuffetOrder/
-
-#logging:
-#  level:
-#    com.fch.buffetorder.mapper.*: debug
+logging:
+  level:
+    com.fch.buffetorder.mapper.*: debug

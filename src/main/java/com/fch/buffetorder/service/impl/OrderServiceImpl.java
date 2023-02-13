@@ -238,6 +238,10 @@ public class OrderServiceImpl implements OrderService {
                 res.put("msg", "订单不存在");
                 return res;
             }
+            if (!order.getUserId().equals(user.getUserId())){
+                res.put("msg", "订单不是你的");
+                return res;
+            }
             if (order.getOrderState() != 1) {
                 res.put("msg", "订单已付款或取消");
                 return res;
