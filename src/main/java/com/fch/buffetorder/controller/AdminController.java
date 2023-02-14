@@ -1,23 +1,18 @@
 package com.fch.buffetorder.controller;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.Cate;
 import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
 import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.service.FoodService;
-import com.fch.buffetorder.util.UploadImgUtil;
-import com.fch.buffetorder.util.WeiXinParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 
 /**
  * @program: BuffetOrder
@@ -37,112 +32,99 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    @Autowired
-    private UploadImgUtil uploadImgUtil;
-
-    @Autowired
-    private WeiXinParam weiXinParam;
-
     @GetMapping("GetAllCates")
-    public ResponseEntity getAllCates() {
-        return new ResponseEntity<>(cateService.adminQueryAllCates(), HttpStatus.OK);
+    public ResponseBean getAllCates() {
+        return cateService.adminQueryAllCates();
     }
 
     @PostMapping("UpdateCate")
-    public ResponseEntity updateCate(@RequestBody Cate cate) {
-        if (!StringUtils.hasText(cate.getCateName())) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        if (cate.getCateWeight() == null) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(cateService.updateCate(cate), HttpStatus.OK);
+    public ResponseBean updateCate(@RequestBody Cate cate) {
+        assertCate(cate);
+        return cateService.updateCate(cate);
     }
 
     @PostMapping("AddCate")
-    public ResponseEntity addCate(@RequestBody Cate cate) {
+    public ResponseBean addCate(@RequestBody Cate cate) {
+        assertCate(cate);
         cate.setCateId(null);
         cate.setIsEnable(1);
-        if (!StringUtils.hasText(cate.getCateName())) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        if (cate.getCateWeight() == null) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(cateService.addCate(cate), HttpStatus.OK);
+        return cateService.addCate(cate);
     }
 
     @GetMapping("GetAllFoods")
-    public ResponseEntity getAllFoods() { return new ResponseEntity<>(foodService.adminQueryAllFoods(), HttpStatus.OK); }
+    public ResponseBean getAllFoods() {
+        return foodService.adminQueryAllFoods();
+    }
 
     @PostMapping("UpdateFoodImg")
-    public ResponseEntity updateFoodImg(@RequestParam("File") MultipartFile file,
-                                        @RequestParam() Integer foodId,
-                                        HttpServletRequest request) {
-        JSONObject res = new JSONObject();
+    public ResponseBean updateFoodImg(@RequestParam("File") MultipartFile file,
+                                      @RequestParam() Integer foodId,
+                                      HttpServletRequest request) {
         Food food = new Food();
         food.setFoodId(foodId);
         if (!foodService.isExistsByFoodId(food) || file.isEmpty()){
-            res.put("code", 500);
-            res.put("message", "还未创建食物或图片为空");
-            return new ResponseEntity<>(res, HttpStatus.OK);
+            return ResponseBean.badRequest("还未创建食物或图片为空");
         }
-        String imgPath;
-        try {
-            imgPath =  weiXinParam.getIMG_PATH() + uploadImgUtil.uploadImg("img/food/", foodId.toString(), file, request);
-        } catch (IOException e) {
-            res.put("code", 500);
-            res.put("message", "上传图片失败");
-            return new ResponseEntity<>(res, HttpStatus.OK);
-        }
-        res = foodService.updateFoodImg(foodId, imgPath);
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        return foodService.updateFoodImg(food, file, request);
     }
 
     @PostMapping("UpdateFood")
-    public ResponseEntity updateFood(@RequestBody Food food) {
-        JSONObject res = foodService.updateFood(food);
-       return new ResponseEntity<>(res, HttpStatus.OK);
+    public ResponseBean updateFood(@RequestBody Food food) {
+        assertFood(food);
+        return foodService.updateFood(food);
     }
 
     @PostMapping("AddFood")
-    public ResponseEntity addFood(@RequestBody Food food) {
-        JSONObject res = foodService.addFood(food);
-        return new ResponseEntity<>(res, HttpStatus.OK);
+    public ResponseBean addFood(@RequestBody Food food) {
+        assertFood(food);
+        return foodService.addFood(food);
     }
 
     @GetMapping("GetAllDetails")
-    public ResponseEntity getAllDetails() {
-        return new ResponseEntity<>(foodService.queryAllDefault(), HttpStatus.OK);
+    public ResponseBean getAllDetails() {
+        return foodService.queryAllDefault();
     }
 
     @PostMapping("UpdateDetail")
-    public ResponseEntity updateDetail(@RequestBody Detail detail) {
-        if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(foodService.updateDetail(detail), HttpStatus.OK);
+    public ResponseBean updateDetail(@RequestBody Detail detail) {
+        assertDetail(detail);
+        return foodService.updateDetail(detail);
     }
 
     @PostMapping("AddDetail")
-    public ResponseEntity addDetail(@RequestBody Detail detail) {
-        if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(foodService.addDetail(detail), HttpStatus.OK);
+    public ResponseBean addDetail(@RequestBody Detail detail) {
+        assertDetail(detail);
+        return foodService.addDetail(detail);
     }
 
     @PostMapping("DeleteDetail")
-    public ResponseEntity deleteDetail(@RequestBody Detail detail) {
-        if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        return new ResponseEntity<>(foodService.deleteDetail(detail), HttpStatus.OK);
+    public ResponseBean deleteDetail(@RequestBody Detail detail) {
+        assertDetail(detail);
+        return foodService.deleteDetail(detail);
     }
 
     @GetMapping("QueryAllAdminInfo")
-    public ResponseEntity queryAllAdminInfo() {
-        return new ResponseEntity<>(adminService.queryAllAdminInfo(), HttpStatus.OK);
+    public ResponseBean queryAllAdminInfo() {
+        return adminService.queryAllAdminInfo();
     }
 
+    private void assertCate(Cate cate){
+        Assert.hasText(cate.getCateName(), "名字不能为空");
+        Assert.notNull(cate.getCateWeight(), "权重不能为空");
+    }
+
+    private void assertFood(Food food){
+        Assert.hasText(food.getFoodName(), "名字不能为空");
+        Assert.notNull(food.getFoodPrice(), "售价不能为空");
+        Assert.notNull(food.getFoodWeight(), "权重不能为空");
+    }
+
+    private void assertDetail(Detail detail){
+        Assert.hasText(detail.getDetailName(), "名字不能为空");
+        Assert.notNull(detail.getDetailPrice(), "售价不能为空");
+        Assert.notNull(detail.getDetailType(), "标签不能为空");
+        if (detail.getDetailType() != 0 && detail.getDetailType() != 1){
+            throw new IllegalArgumentException("标签错误");
+        }
+    }
 }

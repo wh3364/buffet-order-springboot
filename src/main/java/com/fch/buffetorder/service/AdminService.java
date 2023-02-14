@@ -1,6 +1,7 @@
 package com.fch.buffetorder.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.Admin;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -16,7 +17,7 @@ public interface AdminService extends UserDetailsService {
 
     Admin insertAdmin(Admin admin);
 
-    JSONObject getInfo(String token);
+    ResponseBean getInfo(String token);
 
-    JSONObject queryAllAdminInfo();
+    ResponseBean queryAllAdminInfo();
 }

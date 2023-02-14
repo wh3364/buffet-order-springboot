@@ -1,6 +1,7 @@
 package com.fch.buffetorder.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.Order;
 import com.fch.buffetorder.entity.orderbody.OrderBody;
 import com.fch.buffetorder.entity.User;
@@ -33,9 +34,9 @@ public interface OrderService {
 
     void confirmPay(Order order);
 
-    PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Date[] createTime, Integer pageNum, Integer pageSize);
+    ResponseBean adminQueryOrdersByWayAndState(Order order, Date[] createTime, Integer pageNum, Integer pageSize);
 
-    Order adminQueryOrderByOrderId(Order order);
+    ResponseBean adminQueryOrderByOrderId(Order order);
 
-    JSONObject goFood(Order order);
+    ResponseBean goFood(Order order);
 }

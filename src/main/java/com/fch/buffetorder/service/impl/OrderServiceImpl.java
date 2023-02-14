@@ -2,6 +2,7 @@ package com.fch.buffetorder.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.api.WebNotify;
 import com.fch.buffetorder.config.RabbitConfig;
 import com.fch.buffetorder.entity.*;
@@ -238,7 +239,7 @@ public class OrderServiceImpl implements OrderService {
                 res.put("msg", "订单不存在");
                 return res;
             }
-            if (!order.getUserId().equals(user.getUserId())){
+            if (!order.getUserId().equals(user.getUserId())) {
                 res.put("msg", "订单不是你的");
                 return res;
             }
@@ -368,7 +369,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public PageInfo<Order> adminQueryOrdersByWayAndState(Order order, Date[] createTime, Integer pageNum, Integer pageSize) {
+    public ResponseBean adminQueryOrdersByWayAndState(Order order, Date[] createTime, Integer pageNum, Integer pageSize) {
         List<Order> orders;
         Date startDate = createTime[0];
         Date endDate = createTime[1];
@@ -390,48 +391,29 @@ public class OrderServiceImpl implements OrderService {
                 orders = orderMapper.adminQueryOrdersByWayAndState(orderStatus, orderWay, startDate, endDate);
                 break;
         }
-        return new PageInfo<>(orders);
+        return ResponseBean.ok(new PageInfo<>(orders));
     }
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public Order adminQueryOrderByOrderId(Order order) {
+    public ResponseBean adminQueryOrderByOrderId(Order order) {
         order = orderMapper.adminQueryOrderByOrderId(order);
         order.setOrderJsonBody(orderJsonBbToOrderRepJson(order.getOrderJsonBody()));
-        return order;
+        return ResponseBean.ok(order);
     }
 
     @Override
-    public JSONObject goFood(Order order) {
-        JSONObject res = new JSONObject();
-        res.put("code", 0);
-        res.put("message", "出餐失败");
+    public ResponseBean goFood(Order order) {
         order = orderMapper.queryOrderByOrderIdAndUserId(order);
         if (order == null) {
-            res.put("code", 0);
-            res.put("message", "订单不存在");
-            return res;
+            return ResponseBean.badRequest("订单不存在");
         }
-        if (order.getOrderState() == 3 || order.getOrderState() == 4) {
-            res.put("code", 0);
-            res.put("message", "订单已出餐或完成");
-        }
-        if (order.getOrderState() == 5) {
-            res.put("code", 0);
-            res.put("message", "订单已取消");
-        }
-        if (order.getOrderState() == 1) {
-            res.put("code", 0);
-            res.put("message", "订单未付款");
-        }
-        if (order.getOrderState() == 2) {
+        if (order.getOrderState() != 2) {
+            return ResponseBean.badRequest("订单状态不对");
+        } else {
             order.setOrderState(3);
-            if (orderMapper.uploadOrderGoFood(order) > 0) {
-                res.put("code", 200);
-                res.put("message", "成功出餐");
-            }
+            return orderMapper.uploadOrderGoFood(order) > 0 ? ResponseBean.ok(order, "出餐成功") : ResponseBean.badRequest("出餐失败");
         }
-        return res;
     }
 
     private String orderJsonBbToOrderRepJson(String json) {

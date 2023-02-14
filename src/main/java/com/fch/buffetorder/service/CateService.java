@@ -1,6 +1,7 @@
 package com.fch.buffetorder.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.Cate;
 
 import java.util.List;
@@ -14,9 +15,9 @@ import java.util.List;
 public interface CateService {
     List<Cate> queryAllCates();
 
-    JSONObject adminQueryAllCates();
+    ResponseBean adminQueryAllCates();
 
-    JSONObject updateCate(Cate cate);
+    ResponseBean updateCate(Cate cate);
 
-    JSONObject addCate(Cate cate);
+    ResponseBean addCate(Cate cate);
 }

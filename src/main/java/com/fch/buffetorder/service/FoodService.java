@@ -1,9 +1,12 @@
 package com.fch.buffetorder.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -15,21 +18,21 @@ import java.util.List;
 public interface FoodService {
     List<Food> queryAllFoods();
 
-    JSONObject adminQueryAllFoods();
+    ResponseBean adminQueryAllFoods();
 
     boolean isExistsByFoodId(Food food);
 
-    JSONObject updateFoodImg(Integer foodId, String imgPath);
+    ResponseBean updateFoodImg(Food food, MultipartFile file, HttpServletRequest request);
 
-    JSONObject updateFood(Food food);
+    ResponseBean updateFood(Food food);
 
-    JSONObject addFood(Food food);
+    ResponseBean addFood(Food food);
 
-    JSONObject queryAllDefault();
+    ResponseBean queryAllDefault();
 
-    JSONObject updateDetail(Detail detail);
+    ResponseBean updateDetail(Detail detail);
 
-    JSONObject addDetail(Detail detail);
+    ResponseBean addDetail(Detail detail);
 
-    JSONObject deleteDetail(Detail detail);
+    ResponseBean deleteDetail(Detail detail);
 }

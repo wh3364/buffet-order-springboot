@@ -1,6 +1,7 @@
 package com.fch.buffetorder.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.Admin;
 import com.fch.buffetorder.mapper.AdminMapper;
 import com.fch.buffetorder.service.AdminService;
@@ -62,39 +63,23 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    public JSONObject getInfo(String token) {
-        JSONObject res = new JSONObject();
-        res.put("code", 0);
-        res.put("message", "查询失败");
+    public ResponseBean getInfo(String token) {
         Claims claims;
         try {
             claims = jwtUtils.getClaimsFromToken(token);
         } catch (Exception e) {
             e.printStackTrace();
-            return res;
+            return ResponseBean.badRequest("查询失败");
         }
         Admin admin = new Admin();
         admin.setUsername(claims.getSubject());
         admin = adminMapper.queryAdminByUsername(admin);
-        if (admin != null) {
-            res.put("message", "查询成功");
-            res.put("data", admin);
-            res.put("code", 200);
-            return res;
-        }
-        return res;
+        return admin != null ? ResponseBean.ok(admin) : ResponseBean.badRequest("查询失败");
     }
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public JSONObject queryAllAdminInfo() {
-        JSONObject res = new JSONObject(2);
-        if (adminMapper.queryAllAdminInfo() != null) {
-            res.put("code", 200);
-            res.put("data", adminMapper.queryAllAdminInfo());
-        } else {
-            res.put("code", 0);
-        }
-        return res;
+    public ResponseBean queryAllAdminInfo() {
+        return ResponseBean.ok(adminMapper.queryAllAdminInfo());
     }
 }

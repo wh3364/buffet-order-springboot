@@ -2,6 +2,7 @@ package com.fch.buffetorder.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.Cate;
 import com.fch.buffetorder.mapper.CateMapper;
 import com.fch.buffetorder.service.CateService;
@@ -35,7 +36,7 @@ public class CateServiceImpl implements CateService {
     /**
      * 查询所有食物分类
      *
-     * @return
+     * @return List<Cate>
      */
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
@@ -52,44 +53,17 @@ public class CateServiceImpl implements CateService {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public JSONObject adminQueryAllCates() {
-        JSONObject res = new JSONObject();
-        List<Cate> cates = cateMapper.adminQueryAllCates();
-        if (cates.size() > 0) {
-            res.put("data", cates);
-            res.put("code", 200);
-        } else {
-            res.put("message", "查询失败");
-            res.put("code", 0);
-        }
-        return res;
+    public ResponseBean adminQueryAllCates() {
+        return ResponseBean.ok(cateMapper.adminQueryAllCates());
     }
 
     @Override
-    public JSONObject updateCate(Cate cate) {
-        JSONObject res = new JSONObject();
-        if (cateMapper.updateCate(cate) > 0) {
-            res.put("data", cate);
-            res.put("code", 200);
-            res.put("message", "修改成功");
-        } else {
-            res.put("code", 0);
-            res.put("message", "修改失败");
-        }
-        return res;
+    public ResponseBean updateCate(Cate cate) {
+        return cateMapper.updateCate(cate) > 0 ? ResponseBean.ok(cate, "修改成功") : ResponseBean.badRequest("修改失败");
     }
 
     @Override
-    public JSONObject addCate(Cate cate) {
-        JSONObject res = new JSONObject();
-        if (cateMapper.insertCate(cate) > 0) {
-            res.put("data", cate);
-            res.put("code", 200);
-            res.put("message", "添加成功");
-        } else {
-            res.put("code", 0);
-            res.put("message", "修改失败");
-        }
-        return res;
+    public ResponseBean addCate(Cate cate) {
+        return cateMapper.insertCate(cate) > 0 ? ResponseBean.ok(cate, "添加成功") : ResponseBean.badRequest("添加失败");
     }
 }

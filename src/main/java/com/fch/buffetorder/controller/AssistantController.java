@@ -1,6 +1,7 @@
 package com.fch.buffetorder.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.Order;
 import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.service.OrderService;
@@ -37,23 +38,20 @@ public class AssistantController {
     WebSocket webSocket;
 
     @GetMapping("Info")
-    public ResponseEntity getAdminInfo(HttpServletRequest request) {
-        return new ResponseEntity<>(adminService.getInfo(request.getHeader("token")), HttpStatus.OK);
+    public ResponseBean getAdminInfo(HttpServletRequest request) {
+        return adminService.getInfo(request.getHeader("token"));
     }
 
     @PostMapping("Logout")
-    public ResponseEntity adminLogout() {
-        JSONObject resp = new JSONObject();
-        resp.put("code", 200);
-        resp.put("data", "success");
-        return new ResponseEntity<>(resp, HttpStatus.OK);
+    public ResponseBean adminLogout() {
+        return ResponseBean.ok("success");
     }
 
     @GetMapping("GetOrderList")
-    public ResponseEntity getOrderList(@RequestParam Integer way, @RequestParam Integer state,
-                                       @RequestParam String createTime,
-                                       @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
-                                       @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+    public ResponseBean getOrderList(@RequestParam Integer way, @RequestParam Integer state,
+                                     @RequestParam String createTime,
+                                     @RequestParam(value = "pageNum", required = false, defaultValue = "1") Integer pageNum,
+                                     @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
         String[] arr = createTime.split(",", 2);
         Date[] dates = new Date[2];
         for (int i = 0; i < arr.length; i++) {
@@ -62,36 +60,16 @@ public class AssistantController {
         Order order = new Order();
         order.setOrderWay(way);
         order.setOrderState(state);
-        PageInfo<Order> orders = orderService.adminQueryOrdersByWayAndState(order, dates, pageNum, pageSize);
-        JSONObject resp = new JSONObject();
-        resp.put("code", 200);
-        resp.put("data", orders);
-        return new ResponseEntity<>(resp, HttpStatus.OK);
+        return orderService.adminQueryOrdersByWayAndState(order, dates, pageNum, pageSize);
     }
 
     @GetMapping("GetOrder")
-    public ResponseEntity getOrder(@RequestParam String orderId,
-                                   @RequestParam(required = false, defaultValue = "-1") Integer userId) {
-        Order order = new Order();
-        order.setOrderId(orderId);
-        order.setUserId(userId);
-        if (userId == -1){
-            order = orderService.adminQueryOrderByOrderId(order);
-        }else {
-            order = orderService.queryOrderByOrderIdAndUserId(order);
-        }
-        JSONObject resp = new JSONObject();
-        resp.put("code", 200);
-        resp.put("data", order);
-        return new ResponseEntity<>(resp, HttpStatus.OK);
+    public ResponseBean getOrder(Order order) {
+        return orderService.adminQueryOrderByOrderId(order);
     }
 
     @PostMapping("GoFood")
-    public ResponseEntity goFood(@RequestParam String orderId, @RequestParam Integer userId) {
-        Order order = new Order();
-        order.setOrderId(orderId);
-        order.setUserId(userId);
-        JSONObject resp = orderService.goFood(order);
-        return new ResponseEntity<>(resp, HttpStatus.OK);
+    public ResponseBean goFood(Order order) {
+        return orderService.goFood(order);
     }
 }
