@@ -32,14 +32,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
         //读取request头部的token
         String header = request.getHeader("token");
         if (header == null) {
-            if (request.getRequestURI().matches("^/BuffetOrder/img/food/\\S*\\.png$") ||
-                    request.getRequestURI().matches("^/BuffetOrder/img/\\S*\\.png$")){
-                chain.doFilter(request, response);
-            }
-            else {
-                response.setStatus(401);
-                chain.doFilter(request, response);
-            }
+            chain.doFilter(request, response);
             return;
         }
         //解析token

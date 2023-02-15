@@ -1,5 +1,6 @@
 package com.fch.buffetorder.controller;
 
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,12 @@ public class FoodController {
     private FoodService foodService;
 
     @GetMapping("GetAllCate")
-    public ResponseEntity getAllCate() {
-        return new ResponseEntity<>(cateService.queryAllCates(), HttpStatus.OK);
+    public ResponseBean getAllCate() {
+        return cateService.queryAllCates();
     }
 
     @GetMapping("GetAllFood")
-    public ResponseEntity  getAllFoots(){
-        return new ResponseEntity<>(foodService.queryAllFoods(), HttpStatus.OK);
+    public ResponseBean  getAllFoots(){
+        return foodService.queryAllFoods();
     }
 }

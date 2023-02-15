@@ -33,7 +33,7 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class FoodServiceImpl implements FoodService {
 
-    public static final String ALL_FOODS_KEY = "buffetorder.food.foods";
+    public static final String ALL_FOODS_KEY = "buffetorder:food:foods";
 
     @Autowired
     FoodMapper foodMapper;
@@ -47,9 +47,13 @@ public class FoodServiceImpl implements FoodService {
     @Autowired
     private WeiXinParam weiXinParam;
 
+    /**
+     *
+     * @return List<Food>
+     */
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Food> queryAllFoods() {
+    public ResponseBean queryAllFoods() {
         String foodsJson = Optional
                 .ofNullable(redisUtil.getStr(ALL_FOODS_KEY))
                 .orElseGet(() -> {
@@ -57,7 +61,7 @@ public class FoodServiceImpl implements FoodService {
                     redisUtil.setStr(ALL_FOODS_KEY, json, 1000 * 60 * 60);
                     return json;
                 });
-        return JSONArray.parseArray(foodsJson, Food.class);
+        return ResponseBean.ok(JSONArray.parseArray(foodsJson, Food.class));
     }
 
     @Override

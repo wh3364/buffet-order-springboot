@@ -16,7 +16,7 @@ import java.util.List;
  * @create: 2022-10-16 23:21
  **/
 public interface FoodService {
-    List<Food> queryAllFoods();
+    ResponseBean queryAllFoods();
 
     ResponseBean adminQueryAllFoods();
 

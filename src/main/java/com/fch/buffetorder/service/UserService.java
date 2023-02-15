@@ -2,6 +2,7 @@ package com.fch.buffetorder.service;
 
 import com.fch.buffetorder.entity.Address;
 import com.fch.buffetorder.entity.User;
+import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 
@@ -37,4 +38,5 @@ public interface UserService {
 
     String WeiXinLogin(String code);
 
+    ResponseEntity<User> uploadUserNickAvatar(User user);
 }

@@ -31,7 +31,7 @@ public class OpenIdUtil {
     public JSONObject getOpenId(String code) {
         String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + weiXinParam.getAPP_ID() + "&secret=" + weiXinParam.getAPP_SECRET() + "&js_code=" + code + "&grant_type=" + weiXinParam.getGRANT_TYPE();
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(url, String.class);
-        JSONObject res = new JSONObject();
+        JSONObject res = new JSONObject(4);
         if (responseEntity.getStatusCodeValue() <= 200) {
             if (StringUtils.hasText(JSONObject.parseObject(responseEntity.getBody()).getString("errmsg"))) {
                 res.put("flag", false);

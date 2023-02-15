@@ -25,7 +25,7 @@ import java.util.Optional;
 @Transactional(rollbackFor = Exception.class)
 public class CateServiceImpl implements CateService {
 
-    public static final String ALL_CATES_KEY = "buffetorder.cate.allcates";
+    public static final String ALL_CATES_KEY = "buffetorder:cate:allcates";
 
     @Autowired
     private CateMapper cateMapper;
@@ -40,7 +40,7 @@ public class CateServiceImpl implements CateService {
      */
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public List<Cate> queryAllCates() {
+    public ResponseBean queryAllCates() {
         String catesJson = Optional
                 .ofNullable(redisUtil.getStr(ALL_CATES_KEY))
                 .orElseGet(() -> {
@@ -48,7 +48,7 @@ public class CateServiceImpl implements CateService {
                     redisUtil.setStr(ALL_CATES_KEY, json, 1000 * 60 * 60);
                     return json;
                 });
-        return JSONArray.parseArray(catesJson, Cate.class);
+        return ResponseBean.ok(JSONArray.parseArray(catesJson, Cate.class));
     }
 
     @Override

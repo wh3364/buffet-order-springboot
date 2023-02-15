@@ -13,7 +13,7 @@ import java.util.List;
  * @create: 2022-10-15 16:44
  **/
 public interface CateService {
-    List<Cate> queryAllCates();
+    ResponseBean queryAllCates();
 
     ResponseBean adminQueryAllCates();
 

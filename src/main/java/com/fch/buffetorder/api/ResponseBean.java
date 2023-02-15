@@ -20,6 +20,12 @@ public class ResponseBean {
         this.data = data;
     }
 
+    private ResponseBean(ResultEnum resultEnum) {
+        this.success = resultEnum.getSuccess();
+        this.code = resultEnum.getCode();
+        this.message = resultEnum.getMessage();
+    }
+
     private ResponseBean(ResultEnum resultEnum, String message) {
         this.success = resultEnum.getSuccess();
         this.code = resultEnum.getCode();
@@ -46,11 +52,31 @@ public class ResponseBean {
         return new ResponseBean(ResultEnum.BAD_REQUEST, message);
     }
 
+    public static ResponseBean badRequest() {
+        return new ResponseBean(ResultEnum.BAD_REQUEST);
+    }
+
     public static ResponseBean unauthorized(String message) {
         return new ResponseBean(ResultEnum.UNAUTHORIZED, message);
     }
 
+    public static ResponseBean unauthorized() {
+        return new ResponseBean(ResultEnum.UNAUTHORIZED);
+    }
+
+    public static ResponseBean forbidden(String message) {
+        return new ResponseBean(ResultEnum.FORBIDDEN, message);
+    }
+
+    public static ResponseBean forbidden() {
+        return new ResponseBean(ResultEnum.FORBIDDEN);
+    }
+
     public static ResponseBean notFound(String message) {
         return new ResponseBean(ResultEnum.NOT_FOUND, message);
+    }
+
+    public static ResponseBean notFound() {
+        return new ResponseBean(ResultEnum.NOT_FOUND);
     }
 }

@@ -37,11 +37,11 @@ public class TestController {
     RabbitTemplate rabbitTemplate;
 
     @GetMapping("Test")
-    public ResponseEntity test() {
-        WebNotify webNotify = new WebNotify("0", "这是标题", "这是信息", WebNotify.Type.SUCCESS, 1500, false);
+    public ResponseEntity<Object> test() {
+        WebNotify webNotify = WebNotify.info("0", "这是标题", "这是信息", 1500, false);
         webSocket.sendMessage(JSONObject.toJSONString(webNotify));
         rabbitTemplate.convertAndSend(RabbitConfig.ORDER_EXCHANGE, RabbitConfig.ORDER_ROUTING_KEY, "123");
         log.info("发送123");
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

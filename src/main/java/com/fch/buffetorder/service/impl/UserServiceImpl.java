@@ -6,6 +6,8 @@ import com.fch.buffetorder.mapper.AddressMapper;
 import com.fch.buffetorder.mapper.UserMapper;
 import com.fch.buffetorder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -152,7 +154,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public String WeiXinLogin(String code) {
-
         return null;
+    }
+
+    @Override
+    public ResponseEntity<User> uploadUserNickAvatar(User user) {
+        return userMapper.uploadUserNick(user) + userMapper.uploadUserAvatar(user) > 1 ? ResponseEntity.ok(user) : new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 }

@@ -83,14 +83,4 @@ public class LoginInterceptor implements HandlerInterceptor {
         user.setOpenId(openId);
         return !userService.isExistByOpenId(user);
     }
-
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        //log.info("执行了postHandle");
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-        //log.info("执行了afterCompletion");
-    }
 }
