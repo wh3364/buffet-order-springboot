@@ -19,6 +19,4 @@ public class WeiXinParam {
     private String APP_SECRET;
 
     private String GRANT_TYPE;
-
-    private String IMG_PATH;
 }

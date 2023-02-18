@@ -58,7 +58,7 @@ public class AdminController {
 
     @PostMapping("UpdateFoodImg")
     public ResponseBean updateFoodImg(@RequestParam("File") MultipartFile file,
-                                      @RequestParam() Integer foodId,
+                                      @RequestParam Integer foodId,
                                       HttpServletRequest request) {
         Food food = new Food();
         food.setFoodId(foodId);

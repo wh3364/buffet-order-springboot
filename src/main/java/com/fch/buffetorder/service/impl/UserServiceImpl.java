@@ -5,14 +5,17 @@ import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.mapper.AddressMapper;
 import com.fch.buffetorder.mapper.UserMapper;
 import com.fch.buffetorder.service.UserService;
+import com.fch.buffetorder.util.RequestUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 /**
  * @program: BuffetOrder
@@ -20,6 +23,7 @@ import java.math.BigDecimal;
  * @CreatedBy: fch
  * @create: 2022-10-14 15:31
  **/
+@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements UserService {
@@ -29,6 +33,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     AddressMapper addressMapper;
+
+    @Autowired
+    private RequestUtil requestUtil;
 
     @Override
     public User addMoney(User user, BigDecimal money) {
@@ -95,8 +102,17 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public boolean uploadUserAvatar(User user) {
-        return userMapper.uploadUserAvatar(user) > 0;
+    public boolean uploadUserAvatar(User user, MultipartFile file) {
+        String fileName = file.getOriginalFilename();
+        String objectName = UUID.randomUUID().toString().replaceAll("-", "")
+                + fileName.substring(fileName.lastIndexOf("."));
+        String url = requestUtil.uploadImg(file, objectName, "img/avatar/");
+        if ("上传失败".equals(url)){
+            return false;
+        }else {
+            user.setAvatarPath(url);
+            return userMapper.uploadUserAvatar(user) > 0;
+        }
     }
 
     /**

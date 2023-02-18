@@ -10,6 +10,7 @@ import com.fch.buffetorder.entity.detail.RadioDetail;
 import com.fch.buffetorder.mapper.FoodMapper;
 import com.fch.buffetorder.service.FoodService;
 import com.fch.buffetorder.util.RedisUtil;
+import com.fch.buffetorder.util.RequestUtil;
 import com.fch.buffetorder.util.UploadImgUtil;
 import com.fch.buffetorder.util.WeiXinParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +43,9 @@ public class FoodServiceImpl implements FoodService {
     private RedisUtil redisUtil;
 
     @Autowired
-    private UploadImgUtil uploadImgUtil;
-
-    @Autowired
-    private WeiXinParam weiXinParam;
+    private RequestUtil requestUtil;
 
     /**
-     *
      * @return List<Food>
      */
     @Override
@@ -78,11 +75,10 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public ResponseBean updateFoodImg(Food food, MultipartFile file, HttpServletRequest request) {
-        String imgPath;
-        try {
-            imgPath =  weiXinParam.getIMG_PATH() + uploadImgUtil.uploadImg("img/food/", food.getFoodId().toString(), file, request);
-        } catch (IOException e) {
-            return ResponseBean.badRequest("上传图片失败");
+        String objectName = food.getFoodId() + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+        String imgPath = requestUtil.uploadImg(file, objectName, "img/food/");
+        if ("上传失败".equals(imgPath)){
+            return ResponseBean.badRequest("imgPath");
         }
         food = foodMapper.adminQueryFoodById(food);
         food.setFoodImg(imgPath);

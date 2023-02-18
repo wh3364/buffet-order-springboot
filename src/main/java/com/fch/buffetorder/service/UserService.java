@@ -3,7 +3,9 @@ package com.fch.buffetorder.service;
 import com.fch.buffetorder.entity.Address;
 import com.fch.buffetorder.entity.User;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 /**
@@ -24,7 +26,7 @@ public interface UserService {
 
     boolean uploadUserNick(User user);
 
-    boolean uploadUserAvatar(User user);
+    boolean uploadUserAvatar(User user, MultipartFile file);
 
     boolean isExistByOpenId(User user);
 

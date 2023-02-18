@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,11 +35,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private WeiXinParam weiXinParam;
-
-    @Autowired
-    private UploadImgUtil uploadImgUtil;
 //    @PostMapping("GetInfo")
 //    public ResponseEntity loginWeiXin(@RequestBody() String openId) {
 //        JSONObject jsonObject = JSONObject.parseObject(openId);
@@ -101,20 +97,15 @@ public class UserController {
         if (!file.isEmpty()) {
             User user = new User();
             user.setOpenId(openId);
-            String avatarPath;
-            try {
-                avatarPath = weiXinParam.getIMG_PATH() + uploadImgUtil.uploadImg("img/avatar/", UUID.randomUUID().toString(), file, request);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            if (userService.uploadUserAvatar(user, file)){
+                log.info("更新用户头像{}", user);
+                user.setOpenId(null);
+                JSONObject resp = new JSONObject();
+                resp.put("user", user);
+                return new ResponseEntity<>(resp, HttpStatus.OK);
+            }else {
+                return new ResponseEntity(HttpStatus.BAD_REQUEST);
             }
-            user.setAvatarPath(avatarPath);
-            userService.uploadUserAvatar(user);
-            log.info("更新用户头像{}", user);
-            user.setOpenId(null);
-            JSONObject resp = new JSONObject();
-            resp.put("user", user);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
         }
         return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
