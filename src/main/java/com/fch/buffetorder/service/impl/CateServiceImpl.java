@@ -7,6 +7,7 @@ import com.fch.buffetorder.entity.Cate;
 import com.fch.buffetorder.mapper.CateMapper;
 import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.util.RedisUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,15 +24,14 @@ import java.util.Optional;
  **/
 @Service
 @Transactional(rollbackFor = Exception.class)
+@RequiredArgsConstructor
 public class CateServiceImpl implements CateService {
 
     public static final String ALL_CATES_KEY = "buffetorder:cate:allcates";
 
-    @Autowired
-    private CateMapper cateMapper;
+    private final CateMapper cateMapper;
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
     /**
      * 查询所有食物分类

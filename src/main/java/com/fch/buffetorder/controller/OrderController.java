@@ -8,6 +8,7 @@ import com.fch.buffetorder.service.OrderService;
 import com.fch.buffetorder.service.UserService;
 import com.fch.buffetorder.util.JsonUtil;
 import com.github.pagehelper.PageInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,16 +27,14 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("Order")
+@RequiredArgsConstructor
 public class OrderController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
 
-    @Autowired
-    private JsonUtil jsonUtil;
+    private final JsonUtil jsonUtil;
 
     @PostMapping("Create")
     public ResponseEntity createOrder(@RequestBody() String json,

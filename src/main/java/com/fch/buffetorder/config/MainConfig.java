@@ -1,5 +1,6 @@
 package com.fch.buffetorder.config;
 
+import lombok.RequiredArgsConstructor;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
@@ -19,10 +20,10 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
  * @create: 2022-10-14 15:59
  **/
 @Configuration
+@RequiredArgsConstructor
 public class MainConfig {
 
-    @Autowired
-    private Environment env;
+    private final Environment environment;
 
     /**
      * 注入请求模板
@@ -69,7 +70,7 @@ public class MainConfig {
         //设置服务节点部署模式：集群模式；单一节点模式；主从模式；哨兵模式等等
         //config.useClusterServers().addNodeAddress(env.getProperty("redisson.host.config"),env.getProperty("redisson.host.config"));
         config.useSingleServer()
-                .setAddress(env.getProperty("redisson.host.config"))
+                .setAddress(environment.getProperty("redisson.host.config"))
                 .setKeepAlive(true);
         //创建并返回操作Redisson的客户端实例
         return Redisson.create(config);

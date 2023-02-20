@@ -13,6 +13,7 @@ import com.fch.buffetorder.util.RedisUtil;
 import com.fch.buffetorder.util.RequestUtil;
 import com.fch.buffetorder.util.UploadImgUtil;
 import com.fch.buffetorder.util.WeiXinParam;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,18 +33,16 @@ import java.util.Optional;
  **/
 @Service
 @Transactional(rollbackFor = Exception.class)
+@RequiredArgsConstructor
 public class FoodServiceImpl implements FoodService {
 
     public static final String ALL_FOODS_KEY = "buffetorder:food:foods";
 
-    @Autowired
-    FoodMapper foodMapper;
+    private final FoodMapper foodMapper;
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
-    @Autowired
-    private RequestUtil requestUtil;
+    private final RequestUtil requestUtil;
 
     /**
      * @return List<Food>

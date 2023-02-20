@@ -6,6 +6,7 @@ import com.fch.buffetorder.mapper.AddressMapper;
 import com.fch.buffetorder.mapper.UserMapper;
 import com.fch.buffetorder.service.UserService;
 import com.fch.buffetorder.util.RequestUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -26,22 +27,19 @@ import java.util.UUID;
 @Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    AddressMapper addressMapper;
+    private final AddressMapper addressMapper;
 
-    @Autowired
-    private RequestUtil requestUtil;
+    private final RequestUtil requestUtil;
 
     @Override
     public User addMoney(User user, BigDecimal money) {
         User u = userMapper.queryUserByOpenId(user);
         u.setMoney(u.getMoney().add(money));
-        userMapper.uploadUserMoney(u);
         return userMapper.uploadUserMoney(u) > 0 ? u : null;
     }
 

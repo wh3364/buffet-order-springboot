@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.service.impl.CateServiceImpl;
 import com.fch.buffetorder.service.impl.FoodServiceImpl;
 import com.fch.buffetorder.util.RedisUtil;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -18,10 +19,10 @@ import org.springframework.stereotype.Component;
  **/
 @Aspect
 @Component
+@RequiredArgsConstructor
 public class RedisCacheAdvice {
 
-    @Autowired
-    private RedisUtil redisUtil;
+    private final RedisUtil redisUtil;
 
     @Pointcut("execution(* com.fch.buffetorder.service.impl.CateServiceImpl.add*(..))" +
             " || execution(* com.fch.buffetorder.service.impl.CateServiceImpl.update*(..))")

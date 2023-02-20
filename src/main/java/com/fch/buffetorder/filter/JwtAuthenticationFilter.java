@@ -21,7 +21,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
 
     @Autowired
-    JwtUtils jwtUtils;
+    private JwtUtils jwtUtils;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);

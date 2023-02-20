@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.entity.Admin;
 import com.fch.buffetorder.mapper.AdminMapper;
 import com.fch.buffetorder.util.JwtUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,13 +24,12 @@ import java.util.stream.Collectors;
  * @create: 2022-10-31 22:06
  **/
 @Component
+@RequiredArgsConstructor
 public class SuccessHandler implements AuthenticationSuccessHandler {
 
-    @Autowired
-    AdminMapper adminMapper;
+    private final AdminMapper adminMapper;
 
-    @Autowired
-    JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {

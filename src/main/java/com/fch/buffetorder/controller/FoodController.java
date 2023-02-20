@@ -3,6 +3,7 @@ package com.fch.buffetorder.controller;
 import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.service.FoodService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +18,12 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 @RestController
 @RequestMapping("Food")
+@RequiredArgsConstructor
 public class FoodController {
 
-    @Autowired
-    private CateService cateService;
+    private final CateService cateService;
 
-    @Autowired
-    private FoodService foodService;
+    private final FoodService foodService;
 
     @GetMapping("GetAllCate")
     public ResponseBean getAllCate() {

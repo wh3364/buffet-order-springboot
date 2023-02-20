@@ -21,50 +21,6 @@ public class JsonUtil {
 
     private static Integer orderNum = 0;
 
-//    public JSONObject filterRequestJson(String json){
-//        JSONObject req = JSONObject.parseObject(json);
-//        JSONObject res = new JSONObject();
-//        String sessionKey = req.getString("session_key");
-//        String code = req.getString("code");
-//        String openId;
-//        if (StringUtils.hasText(sessionKey)) {
-//            openId = openIdUtil.getOpenIdFromSession(sessionKey);
-//            if (StringUtils.hasText(openId)){
-//                res.put("code", 1);
-//                res.put("openId", openId);
-//                res.put("session_key", sessionKey);
-//                res.put("needReg", needReg(openId));
-//                log.info("从session获取OpenID{}", res.getString("openId"));
-//                return res;
-//            }
-//            else {
-//                res.put("code", 2);
-//                res.put("msg", "需要更新session");
-//                log.info("更新session");
-//                return res;
-//            }
-//        }
-//        if (StringUtils.hasText(code)) {
-//            JSONObject openIdRes = openIdUtil.getOpenId(code);
-//            if (openIdRes.getBoolean("flag")){
-//                res.put("code", 1);
-//                res.put("openId", openIdRes.getString("openId"));
-//                res.put("session_key", openIdRes.getString("session_key"));
-//                res.put("needReg", needReg(openIdRes.getString("openId")));
-//                log.info("从微信服务器获取OpenID");
-//                return res;
-//            }
-//            else {
-//                res.put("code", 0);
-//                res.put("msg", openIdRes.get("msg"));
-//                return res;
-//            }
-//        }
-//        res.put("code", 0);
-//        res.put("msg", "参数错误");
-//        return res;
-//    }
-
     /**
      * 获得请求参数的菜单Json
      * @param data

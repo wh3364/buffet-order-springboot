@@ -20,6 +20,7 @@ import com.fch.buffetorder.util.OrderIdUtil;
 import com.fch.buffetorder.websocket.WebSocket;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -45,34 +46,26 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    UserMapper userMapper;
+    private final UserMapper userMapper;
 
-    @Autowired
-    OrderMapper orderMapper;
+    private final OrderMapper orderMapper;
 
-    @Autowired
-    FoodMapper foodMapper;
+    private final FoodMapper foodMapper;
 
-    @Autowired
-    AddressMapper addressMapper;
+    private final AddressMapper addressMapper;
 
-    @Autowired
-    WebSocket webSocket;
+    private final WebSocket webSocket;
 
-    @Autowired
-    JsonUtil jsonUtil;
+    private final JsonUtil jsonUtil;
 
-    @Autowired
-    RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
-    @Autowired
-    OrderIdUtil orderIdUtil;
+    private final OrderIdUtil orderIdUtil;
 
-    @Autowired
-    RedissonClient redissonClient;
+    private final RedissonClient redissonClient;
 
     @Override
     public JSONObject userCreateOrder(List<OrderBody> orderBodyList, Integer way, User user) {
@@ -201,12 +194,6 @@ public class OrderServiceImpl implements OrderService {
                 }
                 break;
             case 4:
-                PageHelper.startPage(pageNum, pageSize);
-                orderList = orderMapper.userQueryOrderListCompleteOrCancelById(order);
-                for (Order o : orderList) {
-                    o.setOrderJsonBody(orderJsonBbToOrderRepJson(o.getOrderJsonBody()));
-                }
-                break;
             case 5:
                 PageHelper.startPage(pageNum, pageSize);
                 orderList = orderMapper.userQueryOrderListCompleteOrCancelById(order);

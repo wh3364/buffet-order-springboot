@@ -22,7 +22,7 @@ import java.util.ArrayList;
  **/
 public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager = this.getAuthenticationManager();
+    private final AuthenticationManager authenticationManager = this.getAuthenticationManager();
 
     public JwtLoginFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);

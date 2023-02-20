@@ -7,6 +7,7 @@ import com.fch.buffetorder.mapper.AdminMapper;
 import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.util.JwtUtils;
 import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,13 +26,12 @@ import java.util.List;
  **/
 @Service
 @Transactional(rollbackFor = Exception.class)
+@RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
-    @Autowired
-    AdminMapper adminMapper;
+    private final AdminMapper adminMapper;
 
-    @Autowired
-    JwtUtils jwtUtils;
+    private final JwtUtils jwtUtils;
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)

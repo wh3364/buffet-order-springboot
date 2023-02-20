@@ -5,6 +5,7 @@ import com.fch.buffetorder.config.RabbitConfig;
 import com.fch.buffetorder.entity.Order;
 import com.fch.buffetorder.service.OrderService;
 import com.rabbitmq.client.Channel;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,10 @@ import java.nio.charset.StandardCharsets;
  * @create: 2022-12-07 23:37
  **/
 @Component
+@RequiredArgsConstructor
 public class DeadListener {
 
-    @Autowired
-    OrderService orderService;
+    private final OrderService orderService;
 
     @RabbitListener(queues = RabbitConfig.DEAD_QUEUE)
     public void onMessage(Message message, Channel channel) {

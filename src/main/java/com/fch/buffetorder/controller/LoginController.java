@@ -5,6 +5,7 @@ import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.service.UserService;
 import com.fch.buffetorder.util.OpenIdUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,13 +26,12 @@ import javax.servlet.http.HttpServletResponse;
 @CrossOrigin
 @RestController
 @RequestMapping("Login")
+@RequiredArgsConstructor
 public class LoginController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private OpenIdUtil openIdUtil;
+    private final OpenIdUtil openIdUtil;
 
     @PostMapping("RegUser")
     public ResponseBean regUser(HttpServletRequest request, HttpServletResponse response) {

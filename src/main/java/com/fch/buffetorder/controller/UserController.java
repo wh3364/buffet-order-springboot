@@ -6,6 +6,7 @@ import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.service.UserService;
 import com.fch.buffetorder.util.UploadImgUtil;
 import com.fch.buffetorder.util.WeiXinParam;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,25 +31,10 @@ import java.util.UUID;
 @CrossOrigin
 @RestController
 @RequestMapping("User")
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-
-//    @PostMapping("GetInfo")
-//    public ResponseEntity loginWeiXin(@RequestBody() String openId) {
-//        JSONObject jsonObject = JSONObject.parseObject(openId);
-//        if (StringUtils.hasText(jsonObject.getString("openId"))) {
-//            User user = new User();
-//            user.setOpenId(jsonObject.getString("openId"));
-//            user = userService.getUserByOpenId(user);
-//            if (user != null){
-//                log.info("返回用户信息{}", user);
-//                return new ResponseEntity(user, HttpStatus.OK);
-//            }
-//        }
-//        return new ResponseEntity(HttpStatus.BAD_REQUEST);
-//    }
+    private final UserService userService;
 
     @PostMapping("AddMoney")
     public ResponseEntity addMoney(@RequestAttribute("openId") String openId) {

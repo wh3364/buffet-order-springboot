@@ -7,6 +7,7 @@ import com.fch.buffetorder.entity.Food;
 import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.service.FoodService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
@@ -22,15 +23,14 @@ import javax.servlet.http.HttpServletRequest;
  **/
 @RestController
 @RequestMapping("Admin")
+@RequiredArgsConstructor
 public class AdminController {
-    @Autowired
-    private CateService cateService;
 
-    @Autowired
-    private FoodService foodService;
+    private final CateService cateService;
 
-    @Autowired
-    private AdminService adminService;
+    private final FoodService foodService;
+
+    private final AdminService adminService;
 
     @GetMapping("GetAllCates")
     public ResponseBean getAllCates() {

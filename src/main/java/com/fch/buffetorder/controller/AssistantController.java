@@ -7,6 +7,7 @@ import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.service.OrderService;
 import com.fch.buffetorder.websocket.WebSocket;
 import com.github.pagehelper.PageInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,16 +27,12 @@ import java.util.Date;
 @CrossOrigin
 @RestController
 @RequestMapping("Assistant")
+@RequiredArgsConstructor
 public class AssistantController {
 
-    @Autowired
-    AdminService adminService;
+    private final AdminService adminService;
 
-    @Autowired
-    OrderService orderService;
-
-    @Autowired
-    WebSocket webSocket;
+    private final OrderService orderService;
 
     @GetMapping("Info")
     public ResponseBean getAdminInfo(HttpServletRequest request) {
