@@ -2,15 +2,17 @@ package com.fch.buffetorder.api;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class ResponseBean {
+public class ResponseBean implements Serializable{
     private Boolean success;
     private Integer code;
     private String message;
     private Object data;
 
     // 构造方法设为私有
-    private ResponseBean() {
+    public ResponseBean() {
     }
 
     private ResponseBean(ResultEnum resultEnum, Object data) {

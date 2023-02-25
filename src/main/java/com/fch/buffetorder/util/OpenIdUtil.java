@@ -1,13 +1,15 @@
 package com.fch.buffetorder.util;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.entity.User;
+import com.fch.buffetorder.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Random;
+import java.util.Objects;
 
 /**
  * @program: BuffetOrder
@@ -17,6 +19,9 @@ import java.util.Random;
  **/
 @Component
 public class OpenIdUtil {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -43,7 +48,10 @@ public class OpenIdUtil {
                 res.put("session_key", JSONObject.parseObject(responseEntity.getBody()).getString("session_key"));
                 res.put("openId", JSONObject.parseObject(responseEntity.getBody()).getString("openid"));
                 res.put("msg", "成功获得openId");
-                redisUtil.setStr(res.getString("session_key"), res.getString("openId"), 1000 * 60 * 60 * 2L);
+//                UserDto dto = new UserDto();
+//                dto.setOpenId(res.getString("openId"));
+//                BeanUtils.copyProperties(userService.getUserByOpenId("user:" + res.getString("session_key"), dto), dto);
+//                redisUtil.setObject("buffetorder:user:" + res.getString("session_key"), dto);
             }
             return res;
         }
@@ -54,7 +62,11 @@ public class OpenIdUtil {
 
 
     public String getOpenIdFromSession(String sessionKey) {
-        return redisUtil.getStr(sessionKey);
+        User user = redisUtil.getObject("buffetorder:user:" + sessionKey);
+        if (Objects.isNull(user)){
+            return "";
+        }
+        return user.getOpenId();
     }
 
 }

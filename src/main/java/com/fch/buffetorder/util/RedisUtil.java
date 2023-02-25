@@ -27,6 +27,19 @@ public class RedisUtil {
     @Resource
     private RedissonClient redissonClient;
 
+    public <T> T getObject(String key){
+        return redissonClient.<T>getBucket(key).get();
+    }
+
+    public void setObject(String key, Object object, long ttl){
+        RBucket<Object> bucket = redissonClient.getBucket(key);
+        bucket.set(object, ttl <= 0L ? DEFAULT_EXPIRED : ttl, TimeUnit.MILLISECONDS);
+    }
+
+    public void setObject(String key, Object object){
+        RBucket<Object> bucket = redissonClient.getBucket(key);
+        bucket.set(object, DEFAULT_EXPIRED, TimeUnit.MILLISECONDS);
+    }
 
     /**
      * 用于操作key

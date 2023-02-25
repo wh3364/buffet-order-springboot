@@ -7,7 +7,6 @@ import com.fch.buffetorder.service.UserService;
 import com.fch.buffetorder.util.OpenIdUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -52,19 +51,23 @@ public class LoginController {
     }
 
     @PostMapping("LoginUser")
-    public ResponseEntity loginUser(@RequestAttribute("openId") String openId) {
+    public ResponseEntity<?> loginUser(@RequestAttribute("openId") String openId,
+                                       HttpServletResponse response) {
         if (StringUtils.hasText(openId)) {
             User user = new User();
             user.setOpenId(openId);
-            user = userService.getUserByOpenId(user);
+            String sessionKey = response.getHeader("session_key");
+            if (!StringUtils.hasText(sessionKey)) {
+                return ResponseEntity.badRequest().build();
+            }
+            user = userService.getUserByOpenId("user:" + sessionKey, user);
             JSONObject resp = new JSONObject();
             user.setOpenId(null);
             resp.put("user", user);
             log.info("登录用户{}", user);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
-
+            return ResponseEntity.ok(resp);
         }
-        return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().build();
 
     }
 
@@ -76,7 +79,7 @@ public class LoginController {
      */
     @PostMapping("UploadInfo")
     public ResponseEntity<User> uploadUserNickAvatar(@RequestBody() String json,
-                                               @RequestAttribute("openId") String openId) {
+                                                     @RequestAttribute("openId") String openId) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         User user = new User();
         user.setOpenId(openId);

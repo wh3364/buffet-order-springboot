@@ -1,5 +1,7 @@
 package com.fch.buffetorder.service.impl;
 
+import com.fch.buffetorder.aspect.AfterClearCache;
+import com.fch.buffetorder.aspect.Cache;
 import com.fch.buffetorder.entity.Address;
 import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.mapper.AddressMapper;
@@ -8,7 +10,6 @@ import com.fch.buffetorder.service.UserService;
 import com.fch.buffetorder.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -37,7 +38,8 @@ public class UserServiceImpl implements UserService {
     private final RequestUtil requestUtil;
 
     @Override
-    public User addMoney(User user, BigDecimal money) {
+    @AfterClearCache(fromArg = true, keyIndex = 0)
+    public User addMoney(String sessionKey, User user, BigDecimal money) {
         User u = userMapper.queryUserByOpenId(user);
         u.setMoney(u.getMoney().add(money));
         return userMapper.uploadUserMoney(u) > 0 ? u : null;
@@ -85,22 +87,28 @@ public class UserServiceImpl implements UserService {
     /**
      * 个系用户昵称
      *
+     *
+     * @param sessionKey
      * @param user
      * @return
      */
     @Override
-    public boolean uploadUserNick(User user) {
+    @AfterClearCache(fromArg = true, keyIndex = 0)
+    public boolean uploadUserNick(String sessionKey, User user) {
         return userMapper.uploadUserNick(user) > 0;
     }
 
     /**
      * 更新用户头像
      *
+     *
+     * @param sessionKey
      * @param user
      * @return
      */
     @Override
-    public boolean uploadUserAvatar(User user, MultipartFile file) {
+    @AfterClearCache(fromArg = true, keyIndex = 0)
+    public boolean uploadUserAvatar(String sessionKey, User user, MultipartFile file) {
         String fileName = file.getOriginalFilename();
         String objectName = UUID.randomUUID().toString().replaceAll("-", "")
                 + fileName.substring(fileName.lastIndexOf("."));
@@ -135,40 +143,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public User getUserByOpenId(User user) {
-        try {
-            return userMapper.queryUserByOpenId(user);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    @Cache(keyIndex = 0)
+    public User getUserByOpenId(String key, User user) {
+        return userMapper.queryUserByOpenId(user);
     }
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public User queryUserIdByOpenId(User user) {
         return userMapper.queryUserIdByOpenId(user);
-    }
-
-    @Override
-    public String queryUserNickByOpenId() {
-        return null;
-    }
-
-    @Override
-    public String queryUserAvatarByOpenId() {
-        return null;
-    }
-
-    /**
-     * 微信登录
-     *
-     * @param code
-     * @return
-     */
-    @Override
-    public String WeiXinLogin(String code) {
-        return null;
     }
 
     @Override

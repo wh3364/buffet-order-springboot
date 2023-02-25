@@ -3,6 +3,8 @@ package com.fch.buffetorder.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.api.ResponseBean;
+import com.fch.buffetorder.aspect.Cache;
+import com.fch.buffetorder.aspect.BeforeClearCache;
 import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
 import com.fch.buffetorder.entity.detail.MultiDetail;
@@ -11,19 +13,14 @@ import com.fch.buffetorder.mapper.FoodMapper;
 import com.fch.buffetorder.service.FoodService;
 import com.fch.buffetorder.util.RedisUtil;
 import com.fch.buffetorder.util.RequestUtil;
-import com.fch.buffetorder.util.UploadImgUtil;
-import com.fch.buffetorder.util.WeiXinParam;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @program: BuffetOrder
@@ -40,8 +37,6 @@ public class FoodServiceImpl implements FoodService {
 
     private final FoodMapper foodMapper;
 
-    private final RedisUtil redisUtil;
-
     private final RequestUtil requestUtil;
 
     /**
@@ -49,15 +44,16 @@ public class FoodServiceImpl implements FoodService {
      */
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Cache(key = ALL_FOODS_KEY)
     public ResponseBean queryAllFoods() {
-        String foodsJson = Optional
-                .ofNullable(redisUtil.getStr(ALL_FOODS_KEY))
-                .orElseGet(() -> {
-                    String json = JSONObject.toJSONString(foodMapper.queryAllFoods());
-                    redisUtil.setStr(ALL_FOODS_KEY, json, 1000 * 60 * 60);
-                    return json;
-                });
-        return ResponseBean.ok(JSONArray.parseArray(foodsJson, Food.class));
+//        String foodsJson = Optional
+//                .ofNullable(redisUtil.getStr(ALL_FOODS_KEY))
+//                .orElseGet(() -> {
+//                    String json = JSONObject.toJSONString(foodMapper.queryAllFoods());
+//                    redisUtil.setStr(ALL_FOODS_KEY, json, 1000 * 60 * 60);
+//                    return json;
+//                });
+        return ResponseBean.ok(foodMapper.queryAllFoods());
     }
 
     @Override
@@ -73,6 +69,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
+    @BeforeClearCache(key = ALL_FOODS_KEY)
     public ResponseBean updateFoodImg(Food food, MultipartFile file, HttpServletRequest request) {
         String objectName = food.getFoodId() + file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
         String imgPath = requestUtil.uploadImg(file, objectName, "img/food/");
@@ -85,6 +82,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
+    @BeforeClearCache(key = ALL_FOODS_KEY)
     public ResponseBean updateFood(Food food) {
         if (food.getHaveDetail() == 1) {
             String foodDetailStr = food.getFoodDetail();
@@ -106,6 +104,7 @@ public class FoodServiceImpl implements FoodService {
     }
 
     @Override
+    @BeforeClearCache(key = ALL_FOODS_KEY)
     public ResponseBean addFood(Food food) {
         if (food.getHaveDetail() == 1) {
             String foodDetailStr = food.getFoodDetail();

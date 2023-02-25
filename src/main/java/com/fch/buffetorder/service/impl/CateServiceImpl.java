@@ -1,20 +1,17 @@
 package com.fch.buffetorder.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.api.ResponseBean;
+import com.fch.buffetorder.aspect.AfterClearCache;
+import com.fch.buffetorder.aspect.Cache;
+import com.fch.buffetorder.aspect.BeforeClearCache;
 import com.fch.buffetorder.entity.Cate;
 import com.fch.buffetorder.mapper.CateMapper;
 import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * @program: BuffetOrder
@@ -40,15 +37,17 @@ public class CateServiceImpl implements CateService {
      */
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+    @Cache(key = ALL_CATES_KEY)
     public ResponseBean queryAllCates() {
-        String catesJson = Optional
-                .ofNullable(redisUtil.getStr(ALL_CATES_KEY))
-                .orElseGet(() -> {
-                    String json = JSONObject.toJSONString(cateMapper.queryAllCates());
-                    redisUtil.setStr(ALL_CATES_KEY, json, 1000 * 60 * 60);
-                    return json;
-                });
-        return ResponseBean.ok(JSONArray.parseArray(catesJson, Cate.class));
+//        String catesJson = Optional
+//                .ofNullable(redisUtil.getStr(ALL_CATES_KEY))
+//                .orElseGet(() -> {
+//                    String json = JSONObject.toJSONString(cateMapper.queryAllCates());
+//                    redisUtil.setStr(ALL_CATES_KEY, json, 1000 * 60 * 60);
+//                    return json;
+//                });
+
+        return ResponseBean.ok(cateMapper.queryAllCates());
     }
 
     @Override
@@ -58,11 +57,15 @@ public class CateServiceImpl implements CateService {
     }
 
     @Override
+    @BeforeClearCache(key = ALL_CATES_KEY)
+    @AfterClearCache(key = FoodServiceImpl.ALL_FOODS_KEY)
     public ResponseBean updateCate(Cate cate) {
         return cateMapper.updateCate(cate) > 0 ? ResponseBean.ok(cate, "修改成功") : ResponseBean.badRequest("修改失败");
     }
 
     @Override
+    @BeforeClearCache(key = ALL_CATES_KEY)
+    @AfterClearCache(key = FoodServiceImpl.ALL_FOODS_KEY)
     public ResponseBean addCate(Cate cate) {
         return cateMapper.insertCate(cate) > 0 ? ResponseBean.ok(cate, "添加成功") : ResponseBean.badRequest("添加失败");
     }
