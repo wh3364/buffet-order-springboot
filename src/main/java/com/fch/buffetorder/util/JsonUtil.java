@@ -16,7 +16,6 @@ import java.util.List;
  * @CreatedBy: fch
  * @create: 2022-10-21 21:41
  **/
-@Component
 public class JsonUtil {
 
     private static Integer orderNum = 0;
@@ -26,7 +25,7 @@ public class JsonUtil {
      * @param data
      * @return
      */
-    public List<OrderBody> reqParamJsonToOrderBody(JSONObject data) {
+    public static List<OrderBody> reqParamJsonToOrderBody(JSONObject data) {
         JSONArray jsonArray = data.getJSONArray("body");
         return JSONObject.parseArray(jsonArray.toJSONString(), OrderBody.class);
     }
@@ -36,7 +35,7 @@ public class JsonUtil {
      * @param food
      * @return
      */
-    public MultiDetail getMultiDetailInDb(Food food) {
+    public static MultiDetail getMultiDetailInDb(Food food) {
         JSONObject jsonObject = JSONObject.parseObject(food.getFoodDetail());
         return JSONObject.parseObject(jsonObject.getJSONObject("dM").toJSONString(), MultiDetail.class);
     }
@@ -46,12 +45,12 @@ public class JsonUtil {
      * @param food
      * @return
      */
-    public List<RadioDetail> getRadioDetailList(Food food) {
+    public static List<RadioDetail> getRadioDetailList(Food food) {
         JSONObject jsonObject = JSONObject.parseObject(food.getFoodDetail());
         return  JSONArray.parseArray(jsonObject.getJSONArray("dR").toJSONString(), RadioDetail.class);
     }
 
-    public Food getFootFromOrderJsonInDb(JSONObject jsonObject){
+    public static Food getFootFromOrderJsonInDb(JSONObject jsonObject){
         Food food = new Food();
         food.setFoodId(jsonObject.getInteger("id"));
         return food;
@@ -61,7 +60,7 @@ public class JsonUtil {
      *
      * @return
      */
-    public String getOrderGetNum(){
+    public static String getOrderGetNum(){
         if (orderNum == 10000) {
             orderNum = 0;
         }

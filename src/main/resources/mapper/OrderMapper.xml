@@ -172,5 +172,21 @@
         FROM `order`
         WHERE order_id = #{orderId}
     </select>
+    <select id="adminQueryFinishOrdersByCreatTime" resultType="Order">
+        SELECT order_id,
+               user_id,
+               order_way,
+               order_address,
+               order_create_time,
+               order_json_body,
+               order_get_numb,
+               order_state,
+               order_note,
+               order_should_pay,
+               order_real_pay
+        FROM `order`
+        WHERE (order_state = 4)
+          AND (order_create_time BETWEEN #{start} AND #{end})
+    </select>
 
 </mapper>

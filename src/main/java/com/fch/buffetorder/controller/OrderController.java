@@ -34,8 +34,6 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    private final JsonUtil jsonUtil;
-
     @PostMapping("Create")
     public ResponseEntity createOrder(@RequestBody() String json,
                                       @RequestAttribute("openId") String openId) {
@@ -43,7 +41,7 @@ public class OrderController {
         if (jsonObject.size() > 0) {
             User user = new User();
             user.setOpenId(openId);
-            List<OrderBody> orders = jsonUtil.reqParamJsonToOrderBody(jsonObject);
+            List<OrderBody> orders = JsonUtil.reqParamJsonToOrderBody(jsonObject);
             JSONObject resp = orderService.userCreateOrder(orders, jsonObject.getInteger("way"), user);
             if (resp.getInteger("code") == 0) {
                 return new ResponseEntity(HttpStatus.BAD_REQUEST);

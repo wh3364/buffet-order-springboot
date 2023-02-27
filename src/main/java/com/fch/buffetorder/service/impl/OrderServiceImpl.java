@@ -59,8 +59,6 @@ public class OrderServiceImpl implements OrderService {
 
     private final WebSocket webSocket;
 
-    private final JsonUtil jsonUtil;
-
     private final RabbitTemplate rabbitTemplate;
 
     private final OrderIdUtil orderIdUtil;
@@ -86,7 +84,7 @@ public class OrderServiceImpl implements OrderService {
                 StringBuilder sb = new StringBuilder();
                 Integer number = 1;
                 if (item.getHD() == 1 && item.getM().size() > 0) {
-                    MultiDetail multiDetail = jsonUtil.getMultiDetailInDb(food);
+                    MultiDetail multiDetail = JsonUtil.getMultiDetailInDb(food);
                     for (DM m :
                             item.getM()) {
                         finalPrice = finalPrice.add(multiDetail.getMS().get(m.getS()).getV());
@@ -94,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
                     }
                 }
                 if (item.getHD() == 1 && item.getR().size() > 0) {
-                    List<RadioDetail> radioDetails = jsonUtil.getRadioDetailList(food);
+                    List<RadioDetail> radioDetails = JsonUtil.getRadioDetailList(food);
                     for (int i = 0; i < radioDetails.size(); i++) {
                         finalPrice = finalPrice.add(radioDetails.get(i).getRS().get(item.getR().get(i).getS()).getV());
                         sb.append(radioDetails.get(i).getRS().get(item.getR().get(i).getS()).getN()).append(" ");
@@ -118,7 +116,7 @@ public class OrderServiceImpl implements OrderService {
                 return res;
             }
             if (way == 1) {
-                order.setOrderGetNumb(jsonUtil.getOrderGetNum());
+                order.setOrderGetNumb(JsonUtil.getOrderGetNum());
             } else if (way == 2) {
                 Address address = new Address();
                 address.setUserId(user.getUserId());
@@ -380,9 +378,8 @@ public class OrderServiceImpl implements OrderService {
 
     private String orderJsonBbToOrderRepJson(String json) {
         JSONArray jsonArray = JSONArray.parseArray(json);
-        jsonArray.getJSONObject(0);
         for (int i = 0; i < jsonArray.size(); i++) {
-            Food food = jsonUtil.getFootFromOrderJsonInDb(jsonArray.getJSONObject(i));
+            Food food = JsonUtil.getFootFromOrderJsonInDb(jsonArray.getJSONObject(i));
             food = foodMapper.queryFoodImgUrlById(food);
             jsonArray.getJSONObject(i).put("img", food.getFoodImg());
         }
