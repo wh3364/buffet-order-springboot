@@ -26,7 +26,7 @@ public class RequestUtil {
 
     private static final String BUCKET_NAME = "buffet-order";
 
-    private static final String URL = "http://192.168.117.128:8080/file/upload";
+    private static final String URL = "http://192.168.23.128:8080/file/upload";
 
     private final RestTemplate restTemplate;
 

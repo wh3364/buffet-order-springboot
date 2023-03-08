@@ -1,6 +1,7 @@
 package com.fch.buffetorder.filter;
 
 import com.fch.buffetorder.util.JwtUtils;
+import com.fch.buffetorder.util.ThreadLocalUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -42,6 +43,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             chain.doFilter(request, response);
             return;
         }
+        // 把用户名放入本地线程
+        ThreadLocalUtils.put("username", token.getSubject());
         //从token中获取角色信息
         UsernamePasswordAuthenticationToken authenticationToken = jwtUtils.buildAuthentication(token);
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

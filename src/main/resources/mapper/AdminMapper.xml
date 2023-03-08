@@ -49,4 +49,33 @@
                  JOIN role r on admin.role = r.role_id
         WHERE r.role_id = 1
     </select>
+
+    <select id="queryAdminById" resultType="Admin">
+        SELECT admin_id,
+               username,
+               password,
+               avatar,
+               is_enable,
+               role
+        FROM admin
+        WHERE admin_id = #{id}
+    </select>
+
+    <select id="queryAdminPasswordByUsername" resultType="java.lang.String">
+        SELECT password
+        FROM admin
+        WHERE username = #{username}
+    </select>
+
+    <update id="updatePasswordById" parameterType="Admin" useGeneratedKeys="true">
+        UPDATE admin
+        SET password = #{password}
+        WHERE admin_id = #{adminId}
+    </update>
+
+    <update id="updatePasswordByUsername">
+        UPDATE admin
+        SET password = #{password}
+        WHERE username = #{username}
+    </update>
 </mapper>

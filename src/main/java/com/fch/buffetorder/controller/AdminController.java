@@ -1,6 +1,7 @@
 package com.fch.buffetorder.controller;
 
 import com.fch.buffetorder.api.ResponseBean;
+import com.fch.buffetorder.dot.AdminDto;
 import com.fch.buffetorder.entity.Cate;
 import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
@@ -106,6 +107,11 @@ public class AdminController {
     @GetMapping("QueryAllAdminInfo")
     public ResponseBean queryAllAdminInfo() {
         return adminService.queryAllAdminInfo();
+    }
+
+    @PostMapping("reset/{id}")
+    public ResponseBean resetAdmin(@PathVariable Integer id) {
+        return adminService.resetPasswordById(id);
     }
 
     private void assertCate(Cate cate){

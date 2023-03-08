@@ -2,21 +2,26 @@ package com.fch.buffetorder.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.api.ResponseBean;
+import com.fch.buffetorder.dot.AdminDto;
 import com.fch.buffetorder.entity.Admin;
+import com.fch.buffetorder.entity.detail.R;
 import com.fch.buffetorder.mapper.AdminMapper;
 import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.util.JwtUtils;
+import com.fch.buffetorder.util.ThreadLocalUtils;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @program: BuffetOrder
@@ -62,7 +67,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public ResponseBean getInfo(String token) {
         Claims claims;
         try {
@@ -81,5 +86,42 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public ResponseBean queryAllAdminInfo() {
         return ResponseBean.ok(adminMapper.queryAllAdminInfo());
+    }
+
+    @Override
+    public ResponseBean resetPasswordById(Integer id) {
+        Admin admin = adminMapper.queryAdminById(id);
+        if (Objects.isNull(admin)){
+            return ResponseBean.badRequest("此账号不存在");
+        }
+        String password = "123456";
+        admin.setPassword(password);
+        BCryptPasswordEncoder bcryptPasswordEncoder = new BCryptPasswordEncoder();
+        admin.setPassword(bcryptPasswordEncoder.encode(admin.getPassword()));
+        if (adminMapper.updatePasswordById(admin) > 0){
+            admin.setPassword(password);
+            return ResponseBean.ok(admin);
+        }else {
+            return ResponseBean.badRequest("修改失败");
+        }
+    }
+
+    @Override
+    public ResponseBean updatePassword(AdminDto adminDto) {
+        String username = (String) ThreadLocalUtils.get("username");
+        if (Objects.isNull(username)){
+            return ResponseBean.badRequest("身份认证失败");
+        }
+        if (adminDto.getNewPassword().length() < 6){
+            return ResponseBean.badRequest("密码小于6位");
+        }
+        String password = adminMapper.queryAdminPasswordByUsername(username);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        if (bCryptPasswordEncoder.matches(adminDto.getOldPassword(), password)) {
+            adminMapper.updatePasswordByUsername(bCryptPasswordEncoder.encode(adminDto.getNewPassword()), username);
+            return ResponseBean.ok(null, "更新成功");
+        }else {
+            return ResponseBean.badRequest("密码不匹配");
+        }
     }
 }

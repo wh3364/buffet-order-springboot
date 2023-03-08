@@ -17,6 +17,6 @@ public class AfterRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        log.info("加载redis");
+//        log.info("加载redis");
     }
 }

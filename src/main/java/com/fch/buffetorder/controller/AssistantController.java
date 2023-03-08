@@ -2,6 +2,7 @@ package com.fch.buffetorder.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.api.ResponseBean;
+import com.fch.buffetorder.dot.AdminDto;
 import com.fch.buffetorder.entity.Order;
 import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.service.OrderService;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,5 +70,12 @@ public class AssistantController {
     @PostMapping("GoFood")
     public ResponseBean goFood(Order order) {
         return orderService.goFood(order);
+    }
+
+    @PostMapping("updatePassword")
+    public ResponseBean updatePassword(@RequestBody AdminDto adminDto) {
+        Assert.hasText(adminDto.getNewPassword(), "请输入新密码");
+        Assert.hasText(adminDto.getOldPassword(), "请输入旧密码");
+        return adminService.updatePassword(adminDto);
     }
 }

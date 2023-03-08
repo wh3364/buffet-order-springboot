@@ -23,4 +23,12 @@ public interface AdminMapper {
     Admin findAdminByUsername(@Param("username")String username);
 
     List<Admin> queryAllAdminInfo();
+
+    Admin queryAdminById(Integer id);
+
+    int updatePasswordById(Admin admin);
+
+    String queryAdminPasswordByUsername(String username);
+
+    int updatePasswordByUsername(@Param("password")String password, @Param("username")String username);
 }
