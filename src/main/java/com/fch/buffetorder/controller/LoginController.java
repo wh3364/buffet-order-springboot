@@ -79,7 +79,8 @@ public class LoginController {
      */
     @PostMapping("UploadInfo")
     public ResponseEntity<User> uploadUserNickAvatar(@RequestBody() String json,
-                                                     @RequestAttribute("openId") String openId) {
+                                                     @RequestAttribute("openId") String openId,
+                                                     HttpServletRequest request) {
         JSONObject jsonObject = JSONObject.parseObject(json);
         User user = new User();
         user.setOpenId(openId);
@@ -88,6 +89,6 @@ public class LoginController {
         }
         user.setNickName(jsonObject.getString("nick"));
         user.setAvatarPath(jsonObject.getString("avatar"));
-        return userService.uploadUserNickAvatar(user);
+        return userService.uploadUserNickAvatar("user:" + request.getHeader("session_key") ,user);
     }
 }

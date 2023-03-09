@@ -39,5 +39,5 @@ public interface UserService {
 //
 //    String WeiXinLogin(String code);
 
-    ResponseEntity<User> uploadUserNickAvatar(User user);
+    ResponseEntity<User> uploadUserNickAvatar(String sessionKey, User user);
 }

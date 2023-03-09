@@ -155,7 +155,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<User> uploadUserNickAvatar(User user) {
+    @AfterClearCache(fromArg = true, keyIndex = 0)
+    public ResponseEntity<User> uploadUserNickAvatar(String sessionKey, User user) {
         return userMapper.uploadUserNick(user) + userMapper.uploadUserAvatar(user) > 1 ? ResponseEntity.ok(user) : new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 }
