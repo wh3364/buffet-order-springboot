@@ -1,6 +1,7 @@
 package com.fch.buffetorder.util;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +27,8 @@ public class RequestUtil {
 
     private static final String BUCKET_NAME = "buffet-order";
 
-    private static final String URL = "http://192.168.23.128:8080/file/upload";
+    @Value("${url.upload-img}")
+    private String uploadImgUrl;
 
     private final RestTemplate restTemplate;
 
@@ -45,7 +47,7 @@ public class RequestUtil {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(params, headers);
-            return restTemplate.postForObject(URL, entity, String.class);
+            return restTemplate.postForObject(uploadImgUrl, entity, String.class);
         } catch (IOException | RestClientException e) {
             e.printStackTrace();
             return "上传失败";

@@ -72,6 +72,9 @@ jwt:
   # 剩余时间刷新（ms）
   expect: 86400000
 
+url:
+  upload-img: http://192.168.23.128:8080/file/upload
+
 logging:
   level:
     com.fch.buffetorder.mapper.*: debug
