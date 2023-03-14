@@ -51,7 +51,6 @@ public class DashboardServiceImpl implements DashboardService {
                         revenueMap.put(key, o.getOrderRealPay());
                     }
                 }));
-//                .forEach(o -> revenueDtoList.add(new RevenueDto(key, o.getOrderRealPay()))));
         map.forEach((key, value) -> value
                 .forEach(o -> {
                     JSONArray jsonArray = JSONArray.parseArray(o.getOrderJsonBody());
@@ -73,6 +72,17 @@ public class DashboardServiceImpl implements DashboardService {
         res.put("hotFood", hotFoodDtoList);
         return ResponseBean.ok(res);
     }
+
+    @Override
+    public ResponseBean getOrderDataByNow() {
+        Integer finishedCount = orderMapper.adminQueryFinishedByNow();
+        Integer unfinishedCount = orderMapper.adminQueryUnfinishedByNow();
+        Map<String, Integer> res = new HashMap<>();
+        res.put("finishedCount", finishedCount);
+        res.put("unfinishedCount", unfinishedCount);
+        return ResponseBean.ok(res);
+    }
+
     @AllArgsConstructor
     @NoArgsConstructor
     @Data

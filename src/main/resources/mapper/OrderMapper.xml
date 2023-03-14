@@ -188,5 +188,11 @@
         WHERE (order_state = 4)
           AND (order_create_time BETWEEN #{start} AND #{end})
     </select>
+    <select id="adminQueryFinishedByNow" resultType="java.lang.Integer">
+        SELECT COUNT(order_id) FROM `order` WHERE TO_DAYS(order_create_time) = TO_DAYS(NOW()) AND order_state = 4
+    </select>
+    <select id="adminQueryUnfinishedByNow" resultType="java.lang.Integer">
+        SELECT COUNT(order_id) FROM `order` WHERE TO_DAYS(order_create_time) = TO_DAYS(NOW()) AND order_state = 2 OR order_state = 3
+    </select>
 
 </mapper>

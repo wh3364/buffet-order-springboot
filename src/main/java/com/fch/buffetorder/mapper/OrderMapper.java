@@ -49,4 +49,8 @@ public interface OrderMapper {
     Order adminQueryOrderByOrderId(Order order);
 
     List<Order> adminQueryFinishOrdersByCreatTime(Date start, Date end);
+
+    Integer adminQueryFinishedByNow();
+
+    Integer adminQueryUnfinishedByNow();
 }

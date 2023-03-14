@@ -28,4 +28,9 @@ public class DashboardController {
                                 @RequestParam Long endTime){
         return dashboardService.getData(new Date(startTime), new Date(endTime));
     }
+
+    @GetMapping("order")
+    public ResponseBean getOrderDataByNow(){
+        return dashboardService.getOrderDataByNow();
+    }
 }

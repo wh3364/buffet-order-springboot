@@ -12,4 +12,6 @@ import java.util.Date;
  **/
 public interface DashboardService {
     ResponseBean getData(Date start, Date end);
+
+    ResponseBean getOrderDataByNow();
 }
