@@ -1,4 +1,4 @@
-# 不饿了自助点餐微信小程序(暂定)
+# 不饿了自助点餐微信小程序
 
 ### 项目介绍
 
@@ -9,13 +9,15 @@
 - 后端主要技术：springboot，mybatis，redis，rabbitmq
   地址：
   - Gitee： [BuffetOrderSpringboot(gitee.com)](https://gitee.com/fchgit/buffet-order-springboot)
-  - GitHub：[BuffetOrderSpringboot(github.com)](https://github.com/wh3364/BuffetOrderSpringboot)
+  - GitHub：[BuffetOrderSpringboot(github.com)](https://github.com/wh3364/buffet-order-springboot)
 - 微信小程序：uniapp
   地址：
   - Gitee：[BuffetOrderUniApp(gitee.com)](https://gitee.com/fchgit/buffet-order-uni-app)
-- 管理员端：vue, element-ui
+  - GitHub：[BuffetOrderUniApp(github.com)](https://github.com/wh3364/buffet-order-uni-app)
+- 管理员端：vue
   地址：
-  - Gitee：[BuffetOrderAdmin:(gitee.com)](https://gitee.com/fchgit/buffet-order-admin)
+  - Gitee：[BuffetOrderAdmin(gitee.com)](https://gitee.com/fchgit/buffet-order-admin)
+  - GitHub：[BuffetOrderAdmin(github.com)](https://github.com/wh3364/buffet-order-admin)
 
 #### 效果图: 
 
@@ -40,6 +42,10 @@
 
 <div align=center>
     <img src="https://gitee.com/fchgit/buffet-order-springboot/raw/master/%E5%9B%BE/%E6%95%88%E6%9E%9C%E5%9B%BE/admin-2.png" width="600"/>
+</div>
+
+<div align=center>
+    <img src="https://gitee.com/fchgit/buffet-order-springboot/raw/master/%E5%9B%BE/%E6%95%88%E6%9E%9C%E5%9B%BE/admin-3.png" width="600"/>
 </div>
 
 ### 项目部署
