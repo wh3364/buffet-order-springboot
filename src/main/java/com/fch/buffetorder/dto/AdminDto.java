@@ -1,4 +1,4 @@
-package com.fch.buffetorder.dot;
+package com.fch.buffetorder.dto;
 
 import lombok.Data;
 

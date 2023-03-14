@@ -2,16 +2,20 @@
 
 ### 项目介绍
 
-本项目基于springboot，uniapp 前后端分离开发
+​	本系统采用前后端分离架构，前端主要使用Vue、Uni-App、Echarts等技术，后端使用SpringBoot、MyBatis、Redis、RabbitMQ、Minio等技术，以保证系统的高效性。
+
+​       为了保证系统的安全性，采用JWT（JSON Web Token）对用户进行权限验证，采用SpringSecurity进行安全性的维护。
 
 - 后端主要技术：springboot，mybatis，redis，rabbitmq
-  ​	地址：[BuffetOrderSpringboot: 这是一个自助点餐系统的后端 (gitee.com)](https://gitee.com/fchgit/buffet-order-springboot)
-
+  地址：
+  - Gitee： [BuffetOrderSpringboot(gitee.com)](https://gitee.com/fchgit/buffet-order-springboot)
+  - GitHub：[BuffetOrderSpringboot(github.com)](https://github.com/wh3364/BuffetOrderSpringboot)
 - 微信小程序：uniapp
-  ​	地址：[BuffetOrderUniApp: 这是一个基于uniapp的微信自助点餐小程序 (gitee.com)](https://gitee.com/fchgit/buffet-order-uni-app)
-
+  地址：
+  - Gitee：[BuffetOrderUniApp(gitee.com)](https://gitee.com/fchgit/buffet-order-uni-app)
 - 管理员端：vue, element-ui
-  ​	地址：[BuffetOrderAdmin: 这是一个自助点餐小程序的管理页面 (gitee.com)](https://gitee.com/fchgit/buffet-order-admin)
+  地址：
+  - Gitee：[BuffetOrderAdmin:(gitee.com)](https://gitee.com/fchgit/buffet-order-admin)
 
 #### 效果图: 
 
@@ -22,6 +26,10 @@
 
 <div align=center>
     <img src="https://gitee.com/fchgit/buffet-order-springboot/raw/master/%E5%9B%BE/%E6%95%88%E6%9E%9C%E5%9B%BE/wx-3.png" width="300"/>    <img src="https://gitee.com/fchgit/buffet-order-springboot/raw/master/%E5%9B%BE/%E6%95%88%E6%9E%9C%E5%9B%BE/wx-4.png" width="300"/>
+</div>
+
+<div align=center>
+    <img src="https://gitee.com/fchgit/buffet-order-springboot/raw/master/%E5%9B%BE/%E6%95%88%E6%9E%9C%E5%9B%BE/wx-5.png" width="300"/>    <img src="https://gitee.com/fchgit/buffet-order-springboot/raw/master/%E5%9B%BE/%E6%95%88%E6%9E%9C%E5%9B%BE/wx-6.png" width="300"/>
 </div>
 
 ##### 	管理员端:
@@ -66,8 +74,15 @@ session_key默认1小时后过期，过期后response返回状态码为401，小
 │  │              │  BuffetorderApplication.java
 │  │              │  
 │  │              ├─api
+│  │              │      ResponseBean.java
+│  │              │      ResultEnum.java
 │  │              │      WebNotify.java // 封装的websocket发送的实体
-│  │              │      
+│  │              ├─aspect //AOP切面
+│  │              │      AfterClearCache.java //之后清除缓存
+│  │              │      BeforeClearCache.java //之前清除缓存
+│  │              │      Cache.java //缓存注解
+│  │              │      RedisCacheAdvice.java //AOP的Redis增强方法
+│  │              │
 │  │              ├─config // 配置
 │  │              │      MainConfig.java
 │  │              │      MvcConfig.java
@@ -77,12 +92,17 @@ session_key默认1小时后过期，过期后response返回状态码为401，小
 │  │              ├─controller
 │  │              │      AdminController.java //只有身份是admin才能访问
 │  │              │      AssistantController.java //只有身份是assistant/admin才能访问
+│  │              │      DashboardController.java
 │  │              │      FoodController.java
 │  │              │      LoginController.java
 │  │              │      OrderController.java
 │  │              │      TestController.java
 │  │              │      UserController.java
-│  │              │      
+│  │              │
+│  │              ├─dto
+│  │              │      AdminDto.java Admin登录实体
+│  │              │      DashboardDto.java 仪表盘所使用数据的实体
+│  │              │
 │  │              ├─entity
 │  │              │  │  Address.java
 │  │              │  │  Admin.java
@@ -129,6 +149,7 @@ session_key默认1小时后过期，过期后response返回状态码为401，小
 │  │              ├─service
 │  │              │  │  AdminService.java
 │  │              │  │  CateService.java
+│  │              │  │  DashboardService.java
 │  │              │  │  FoodService.java
 │  │              │  │  OrderService.java
 │  │              │  │  UserService.java
@@ -136,6 +157,7 @@ session_key默认1小时后过期，过期后response返回状态码为401，小
 │  │              │  └─impl
 │  │              │          AdminServiceImpl.java
 │  │              │          CateServiceImpl.java
+│  │              │          DashboardServiceImpl.java
 │  │              │          FoodServiceImpl.java
 │  │              │          OrderServiceImpl.java
 │  │              │          UserServiceImpl.java
@@ -144,7 +166,10 @@ session_key默认1小时后过期，过期后response返回状态码为401，小
 │  │              │      JsonUtil.java //主要处理食物的详细信息
 │  │              │      JwtUtils.java //jwt
 │  │              │      OpenIdUtil.java //获取小程序openId
+│  │              │      OrderIdUtil.java //生成订单Id
 │  │              │      RedisUtil.java //Redis
+│  │              │      RequestUtil.java //封装的请求类
+│  │              │      ThreadLocalUtils.java //本地线程类
 │  │              │      UploadImgUtil.java //更新图片
 │  │              │      WeiXinParam.java //微信参数
 │  │              │      
@@ -153,6 +178,7 @@ session_key默认1小时后过期，过期后response返回状态码为401，小
 │  │                      
 │  └─resources
 │      │  application.yml
+│      │  application-wx.yml //存放小程序密钥，需要自己创建
 │      │  
 │      ├─mapper
 │      │      AddressMapper.xml
@@ -161,17 +187,8 @@ session_key默认1小时后过期，过期后response返回状态码为401，小
 │      │      FoorMapper.xml
 │      │      OrderMapper.xml
 │      │      UserMapper.xml
-│      │      
-│      └─static
-│          └─img
-│              │  00282-26029825.png //3个小程序轮播图的图
-│              │  00283-3828490356.png
-│              │  00284-1374461210.png
-│              │  
-│              ├─avatar //放头像的文件夹
-│              │      ...
-│              └─food //放食物图片的文件夹
-│                     ...
+│      
+│      
 │                      
 └─test
 ```
@@ -183,9 +200,14 @@ session_key默认1小时后过期，过期后response返回状态码为401，小
 
 ### 注意事项
 
-- application.yml中wx.app-id与wx.app-secret 分别对应AppID(小程序ID)与AppSecret(小程序密钥)，若没有可去微信小程序官方申请获取[微信公众平台](https://mp.weixin.qq.com/)
+- application-wx.yml中wx.app-id与wx.app-secret 分别对应AppID(小程序ID)与AppSecret(小程序密钥)，若没有可去微信小程序官方申请获取[微信公众平台](https://mp.weixin.qq.com/)
 
-### 接下来的开发
+  格式：
 
-- 添加分布式锁解决高并发
-- 添加员工管理功能
+  ```y&#39;m&#39;l
+  #微信配置
+  wx:
+    app-id: 
+    app-secret: 
+    grant-type: authorization_code
+  ```

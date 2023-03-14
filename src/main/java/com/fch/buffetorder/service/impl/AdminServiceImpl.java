@@ -1,17 +1,14 @@
 package com.fch.buffetorder.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.api.ResponseBean;
-import com.fch.buffetorder.dot.AdminDto;
+import com.fch.buffetorder.dto.AdminDto;
 import com.fch.buffetorder.entity.Admin;
-import com.fch.buffetorder.entity.detail.R;
 import com.fch.buffetorder.mapper.AdminMapper;
 import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.util.JwtUtils;
 import com.fch.buffetorder.util.ThreadLocalUtils;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,7 +17,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
 import java.util.Objects;
 
 /**

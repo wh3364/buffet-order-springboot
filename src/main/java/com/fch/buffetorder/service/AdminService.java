@@ -1,12 +1,9 @@
 package com.fch.buffetorder.service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.fch.buffetorder.api.ResponseBean;
-import com.fch.buffetorder.dot.AdminDto;
+import com.fch.buffetorder.dto.AdminDto;
 import com.fch.buffetorder.entity.Admin;
 import org.springframework.security.core.userdetails.UserDetailsService;
-
-import java.util.List;
 
 /**
  * @program: BuffetOrder

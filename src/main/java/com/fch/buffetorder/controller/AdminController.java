@@ -1,7 +1,6 @@
 package com.fch.buffetorder.controller;
 
 import com.fch.buffetorder.api.ResponseBean;
-import com.fch.buffetorder.dot.AdminDto;
 import com.fch.buffetorder.entity.Cate;
 import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
@@ -9,7 +8,6 @@ import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.service.CateService;
 import com.fch.buffetorder.service.FoodService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
