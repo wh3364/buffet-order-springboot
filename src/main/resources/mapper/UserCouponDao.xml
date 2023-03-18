@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fch.buffetorder.mapper.UserCouponDao">
+
+    <resultMap type="com.fch.buffetorder.entity.UserCoupon" id="UserCouponMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="templateId" column="template_id" jdbcType="INTEGER"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="couponCode" column="coupon_code" jdbcType="VARCHAR"/>
+        <result property="assignDate" column="assign_date" jdbcType="TIMESTAMP"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="UserCouponMap">
+        select id,
+               template_id,
+               user_id,
+               coupon_code,
+               assign_date,
+               status
+        from user_coupon
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAll" resultMap="UserCouponMap">
+        select id,
+               template_id,
+               user_id,
+               coupon_code,
+               assign_date,
+               status
+        from user_coupon
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into user_coupon(template_id, user_id, coupon_code, assign_date, status)
+        values (#{templateId}, #{userId}, #{couponCode}, #{assignDate}, #{status})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into user_coupon(template_id, user_id, coupon_code, assign_date, status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.templateId}, #{entity.userId}, #{entity.couponCode}, #{entity.assignDate}, #{entity.status})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into user_coupon(template_id, user_id, coupon_code, assign_date, status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.templateId}, #{entity.userId}, #{entity.couponCode}, #{entity.assignDate}, #{entity.status})
+        </foreach>
+        on duplicate key update
+        template_id = values(template_id),
+        user_id = values(user_id),
+        coupon_code = values(coupon_code),
+        assign_date = values(assign_date),
+        status = values(status)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update user_coupon
+        <set>
+            <if test="templateId != null">
+                template_id = #{templateId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="couponCode != null and couponCode != ''">
+                coupon_code = #{couponCode},
+            </if>
+            <if test="assignDate != null">
+                assign_date = #{assignDate},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from user_coupon
+        where id = #{id}
+    </delete>
+
+</mapper>
+

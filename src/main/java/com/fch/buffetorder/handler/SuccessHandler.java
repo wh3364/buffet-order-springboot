@@ -48,8 +48,6 @@ public class SuccessHandler implements AuthenticationSuccessHandler {
         response.setContentType("application/json;charset=utf-8");
         try (PrintWriter out = response.getWriter()) {
             out.write(jsonObject.toJSONString());
-            out.close();
-            out.flush();
         }
     }
 }

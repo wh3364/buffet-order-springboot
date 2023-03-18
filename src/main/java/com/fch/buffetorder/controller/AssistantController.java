@@ -2,8 +2,10 @@ package com.fch.buffetorder.controller;
 
 import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.dto.AdminDto;
+import com.fch.buffetorder.dto.CouponAddDto;
 import com.fch.buffetorder.entity.Order;
 import com.fch.buffetorder.service.AdminService;
+import com.fch.buffetorder.service.CouponService;
 import com.fch.buffetorder.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +31,8 @@ public class AssistantController {
     private final AdminService adminService;
 
     private final OrderService orderService;
+
+    private final CouponService couponService;
 
     @GetMapping("Info")
     public ResponseBean getAdminInfo(HttpServletRequest request) {
@@ -71,5 +75,21 @@ public class AssistantController {
         Assert.hasText(adminDto.getNewPassword(), "请输入新密码");
         Assert.hasText(adminDto.getOldPassword(), "请输入旧密码");
         return adminService.updatePassword(adminDto);
+    }
+
+    @PutMapping("coupon")
+    public ResponseBean addCoupon(@RequestBody CouponAddDto dto) {
+        return couponService.addCoupon(dto);
+    }
+
+    @GetMapping("coupon/page/{pageNum}")
+    public ResponseBean getCouponByPage(@PathVariable Integer pageNum,
+                                        @RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize) {
+        return couponService.getCouponByPage(pageNum, pageSize);
+    }
+
+    @GetMapping("coupon/{id}")
+    public ResponseBean getCouponById(@PathVariable Integer id) {
+        return couponService.getCouponById(id);
     }
 }

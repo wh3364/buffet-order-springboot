@@ -105,6 +105,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ResponseBean updatePassword(AdminDto adminDto) {
         String username = (String) ThreadLocalUtils.get("username");
+        ThreadLocalUtils.removeResources();
         if (Objects.isNull(username)){
             return ResponseBean.badRequest("身份认证失败");
         }

@@ -1,11 +1,13 @@
 package com.fch.buffetorder.controller;
 
 import com.fch.buffetorder.api.ResponseBean;
+import com.fch.buffetorder.dto.CouponAuditDto;
 import com.fch.buffetorder.entity.Cate;
 import com.fch.buffetorder.entity.Detail;
 import com.fch.buffetorder.entity.Food;
 import com.fch.buffetorder.service.AdminService;
 import com.fch.buffetorder.service.CateService;
+import com.fch.buffetorder.service.CouponService;
 import com.fch.buffetorder.service.FoodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.Assert;
@@ -30,6 +32,8 @@ public class AdminController {
     private final FoodService foodService;
 
     private final AdminService adminService;
+
+    private final CouponService couponService;
 
     @GetMapping("GetAllCates")
     public ResponseBean getAllCates() {
@@ -110,6 +114,11 @@ public class AdminController {
     @PostMapping("reset/{id}")
     public ResponseBean resetAdmin(@PathVariable Integer id) {
         return adminService.resetPasswordById(id);
+    }
+
+    @PostMapping("coupon")
+    public ResponseBean audit(@RequestBody CouponAuditDto dto) {
+        return couponService.audit(dto);
     }
 
     private void assertCate(Cate cate){

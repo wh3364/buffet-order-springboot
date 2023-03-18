@@ -93,7 +93,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             redisUtil.setObject("buffetorder:temp:" + openId, true, 1000L);
             return true;
         }else
-        return false;
+            return false;
     }
 //
 //    private boolean needReg(String openId, String sessionKey){

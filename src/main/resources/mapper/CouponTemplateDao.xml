@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fch.buffetorder.mapper.CouponTemplateDao">
+
+    <resultMap type="com.fch.buffetorder.entity.CouponTemplate" id="CouponTemplateMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="flag" column="flag" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="logo" column="logo" jdbcType="VARCHAR"/>
+        <result property="intro" column="intro" jdbcType="VARCHAR"/>
+        <result property="category" column="category" jdbcType="INTEGER"/>
+        <result property="scope" column="scope" jdbcType="INTEGER"/>
+        <result property="scopeId" column="scope_id" jdbcType="INTEGER"/>
+        <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+        <result property="couponCount" column="coupon_count" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="userId" column="user_id" jdbcType="INTEGER"/>
+        <result property="userAudit" column="user_audit" jdbcType="VARCHAR"/>
+        <result property="templateKey" column="template_key" jdbcType="VARCHAR"/>
+        <result property="target" column="target" jdbcType="INTEGER"/>
+        <result property="targetLevel" column="target_level" jdbcType="INTEGER"/>
+        <result property="sendType" column="send_type" jdbcType="INTEGER"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+        <result property="limitMoney" column="limit_money" jdbcType="NUMERIC"/>
+        <result property="discount" column="discount" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="CouponTemplateMap">
+        select
+          id, flag, name, logo, intro, category, scope, scope_id, expire_time, coupon_count, create_time, user_id, user_audit, template_key, target, target_level, send_type, start_time, end_time, limit_money, discount
+        from coupon_template
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAll" resultMap="CouponTemplateMap">
+        select
+          id, flag, name, logo, intro, category, scope, scope_id, expire_time, coupon_count, create_time, user_id, user_audit, template_key, target, target_level, send_type, start_time, end_time, limit_money, discount
+        from coupon_template
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into coupon_template(flag, name, logo, intro, category, scope, scope_id, expire_time, coupon_count, create_time, user_id, user_audit, template_key, target, target_level, send_type, start_time, end_time, limit_money, discount)
+        values (#{flag}, #{name}, #{logo}, #{intro}, #{category}, #{scope}, #{scopeId}, #{expireTime}, #{couponCount}, #{createTime}, #{userId}, #{userAudit}, #{templateKey}, #{target}, #{targetLevel}, #{sendType}, #{startTime}, #{endTime}, #{limitMoney}, #{discount})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into coupon_template(flag, name, logo, intro, category, scope, scope_id, expire_time, coupon_count, create_time, user_id, user_audit, template_key, target, target_level, send_type, start_time, end_time, limit_money, discount)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.flag}, #{entity.name}, #{entity.logo}, #{entity.intro}, #{entity.category}, #{entity.scope}, #{entity.scopeId}, #{entity.expireTime}, #{entity.couponCount}, #{entity.createTime}, #{entity.userId}, #{entity.userAudit}, #{entity.templateKey}, #{entity.target}, #{entity.targetLevel}, #{entity.sendType}, #{entity.startTime}, #{entity.endTime}, #{entity.limitMoney}, #{entity.discount})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into coupon_template(flag, name, logo, intro, category, scope, scope_id, expire_time, coupon_count, create_time, user_id, user_audit, template_key, target, target_level, send_type, start_time, end_time, limit_money, discount)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.flag}, #{entity.name}, #{entity.logo}, #{entity.intro}, #{entity.category}, #{entity.scope}, #{entity.scopeId}, #{entity.expireTime}, #{entity.couponCount}, #{entity.createTime}, #{entity.userId}, #{entity.userAudit}, #{entity.templateKey}, #{entity.target}, #{entity.targetLevel}, #{entity.sendType}, #{entity.startTime}, #{entity.endTime}, #{entity.limitMoney}, #{entity.discount})
+        </foreach>
+        on duplicate key update
+        flag = values(flag),
+        name = values(name),
+        logo = values(logo),
+        intro = values(intro),
+        category = values(category),
+        scope = values(scope),
+        scope_id = values(scope_id),
+        expire_time = values(expire_time),
+        coupon_count = values(coupon_count),
+        create_time = values(create_time),
+        user_id = values(user_id),
+        user_audit = values(user_audit),
+        template_key = values(template_key),
+        target = values(target),
+        target_level = values(target_level),
+        send_type = values(send_type),
+        start_time = values(start_time),
+        end_time = values(end_time),
+        limit_money = values(limit_money),
+        discount = values(discount)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update coupon_template
+        <set>
+            <if test="flag != null">
+                flag = #{flag},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="logo != null and logo != ''">
+                logo = #{logo},
+            </if>
+            <if test="intro != null and intro != ''">
+                intro = #{intro},
+            </if>
+            <if test="category != null">
+                category = #{category},
+            </if>
+            <if test="scope != null">
+                scope = #{scope},
+            </if>
+            <if test="scopeId != null">
+                scope_id = #{scopeId},
+            </if>
+            <if test="expireTime != null">
+                expire_time = #{expireTime},
+            </if>
+            <if test="couponCount != null">
+                coupon_count = #{couponCount},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="userAudit != null and userAudit != ''">
+                user_audit = #{userAudit},
+            </if>
+            <if test="templateKey != null and templateKey != ''">
+                template_key = #{templateKey},
+            </if>
+            <if test="target != null">
+                target = #{target},
+            </if>
+            <if test="targetLevel != null">
+                target_level = #{targetLevel},
+            </if>
+            <if test="sendType != null">
+                send_type = #{sendType},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="limitMoney != null">
+                limit_money = #{limitMoney},
+            </if>
+            <if test="discount != null">
+                discount = #{discount},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from coupon_template where id = #{id}
+    </delete>
+
+</mapper>
+
