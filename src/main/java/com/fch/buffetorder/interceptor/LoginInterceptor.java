@@ -5,10 +5,12 @@ import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.service.UserService;
 import com.fch.buffetorder.util.OpenIdUtil;
 import com.fch.buffetorder.util.RedisUtil;
+import com.fch.buffetorder.util.ThreadLocalUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,10 +97,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         }else
             return false;
     }
-//
-//    private boolean needReg(String openId, String sessionKey){
-//        User user = new User();
-//        user.setOpenId(openId);
-//        return Objects.isNull(userService.getUserByOpenId("user:" + sessionKey, user));
-//    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+        ThreadLocalUtils.removeResources();
+    }
 }

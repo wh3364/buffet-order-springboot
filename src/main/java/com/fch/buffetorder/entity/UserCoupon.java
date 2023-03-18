@@ -3,8 +3,10 @@ package com.fch.buffetorder.entity;
 import java.util.Date;
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.Getter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 9.用户优惠券表(UserCoupon)实体类
@@ -32,11 +34,19 @@ public class UserCoupon implements Serializable {
     /**
      * 优惠券分发时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date assignDate;
     /**
      * 优惠券状态 1:未使用 2:已使用 3:已过期
      */
     private Integer status;
+
+    public UserCoupon(Integer templateId, Integer userId, String couponCode) {
+        this.templateId = templateId;
+        this.userId = userId;
+        this.couponCode = couponCode;
+    }
 
     public void setStatus(Status status) {
         this.status = status.getValue();

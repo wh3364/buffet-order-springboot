@@ -4,6 +4,8 @@ import com.fch.buffetorder.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @program: BuffetOrder
  * @description: 用户Mapper
@@ -31,5 +33,7 @@ public interface UserMapper {
     User queryUserByOpenId(User user);
 
     User queryUserIdByOpenId(User user);
+
+    List<Integer> queryAllUserId();
 
 }

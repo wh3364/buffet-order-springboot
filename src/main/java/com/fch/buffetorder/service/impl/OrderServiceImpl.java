@@ -17,6 +17,7 @@ import com.fch.buffetorder.mapper.UserMapper;
 import com.fch.buffetorder.service.OrderService;
 import com.fch.buffetorder.util.JsonUtil;
 import com.fch.buffetorder.util.OrderIdUtil;
+import com.fch.buffetorder.util.SnowFlowUtils;
 import com.fch.buffetorder.websocket.WebSocket;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -60,8 +61,6 @@ public class OrderServiceImpl implements OrderService {
     private final WebSocket webSocket;
 
     private final RabbitTemplate rabbitTemplate;
-
-    private final OrderIdUtil orderIdUtil;
 
     private final RedissonClient redissonClient;
 
@@ -132,13 +131,12 @@ public class OrderServiceImpl implements OrderService {
             log.info("订单Json:{}", JSONObject.toJSONString(orderJsonInDbList));
             order.setUserId(user.getUserId());
             order.setOrderWay(way);
-            Date now = new Date();
-            order.setOrderCreateTime(now);
+            order.setOrderCreateTime(new Date());
             order.setOrderJsonBody(JSONObject.toJSONString(orderJsonInDbList));
             order.setOrderState(1);
             order.setOrderNote("无");
             order.setOrderShouldPay(sum);
-            order.setOrderId(orderIdUtil.creatOrderIdLength21(now));
+            order.setOrderId(String.valueOf(SnowFlowUtils.getInstance().nextId()));
             if (orderMapper.createOrder(order) > 0) {
                 res.put("order", order);
                 res.put("code", 1);

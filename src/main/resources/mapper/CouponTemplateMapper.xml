@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.fch.buffetorder.mapper.CouponTemplateDao">
+<mapper namespace="com.fch.buffetorder.mapper.CouponTemplateMapper">
 
     <resultMap type="com.fch.buffetorder.entity.CouponTemplate" id="CouponTemplateMap">
         <result property="id" column="id" jdbcType="INTEGER"/>

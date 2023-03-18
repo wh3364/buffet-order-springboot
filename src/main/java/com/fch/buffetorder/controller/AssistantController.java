@@ -13,6 +13,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.Date;
 
 /**
@@ -78,7 +79,7 @@ public class AssistantController {
     }
 
     @PutMapping("coupon")
-    public ResponseBean addCoupon(@RequestBody CouponAddDto dto) {
+    public ResponseBean addCoupon(@RequestBody @Valid CouponAddDto dto) {
         return couponService.addCoupon(dto);
     }
 

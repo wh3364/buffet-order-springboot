@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 /**
  * @program: BuffetOrder
@@ -117,7 +118,7 @@ public class AdminController {
     }
 
     @PostMapping("coupon")
-    public ResponseBean audit(@RequestBody CouponAuditDto dto) {
+    public ResponseBean audit(@RequestBody @Valid CouponAuditDto dto) {
         return couponService.audit(dto);
     }
 

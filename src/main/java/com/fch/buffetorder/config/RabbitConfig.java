@@ -26,6 +26,7 @@ public class RabbitConfig {
     @Resource
     private CachingConnectionFactory connectionFactory;
 
+    /////////////死信订单队列////////////
     public static final String ORDER_QUEUE = "order.queue";
 
     public static final String DEAD_QUEUE = "dead.queue";
@@ -39,6 +40,17 @@ public class RabbitConfig {
     public static final String DEAD_ROUTING_KEY = "dead";
 
     private static final long TTL = 1000 * 60 * 30;
+
+    /////////////优惠券队列队列////////////
+    public static final String COUPON_SYSTEM_QUEUE = "coupon.system.queue";
+
+    public static final String COUPON_USER_QUEUE = "coupon.user.queue";
+
+    public static final String COUPON_EXCHANGE = "coupon.exchange";
+
+    public static final String COUPON_SYSTEM_ROUTING_KEY = "coupon.system";
+
+    public static final String COUPON_USER_ROUTING_KEY = "coupon.user";
 
     /**
      * 声明rabbittemplate 设置应答方式
@@ -103,6 +115,38 @@ public class RabbitConfig {
     @Bean
     public Binding bindingDead() {
         return BindingBuilder.bind(getDeadQueue()).to(getDeadExchange()).with(DEAD_ROUTING_KEY);
+    }
+
+
+
+    // 系统优惠券的队列
+    @Bean
+    public Queue getCouponSystemQueue(){
+        return new Queue(COUPON_SYSTEM_QUEUE);
+    }
+
+    // 用户优惠券的队列
+    @Bean
+    public Queue getCouponUserQueue(){
+        return new Queue(COUPON_USER_QUEUE);
+    }
+
+    // 优惠券模板专用的交换机
+    @Bean
+    public DirectExchange getCouponExchange(){
+        return new DirectExchange(COUPON_EXCHANGE);
+    }
+
+    // 系统优惠券队列的绑定
+    @Bean
+    public Binding bindSys(){
+        return BindingBuilder.bind(getCouponSystemQueue()).to(getCouponExchange()).with(COUPON_SYSTEM_ROUTING_KEY);
+    }
+
+    // 用户优惠券队列的绑定
+    @Bean
+    public Binding bindUser(){
+        return BindingBuilder.bind(getCouponUserQueue()).to(getCouponExchange()).with(COUPON_USER_ROUTING_KEY);
     }
 
 }

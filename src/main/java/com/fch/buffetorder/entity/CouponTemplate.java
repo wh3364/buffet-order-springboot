@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.Getter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 8.优惠券模板表(CouponTemplate)实体类
@@ -47,6 +49,8 @@ public class CouponTemplate implements Serializable {
     /**
      * 优惠券发放结束日期
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date expireTime;
     /**
      * 优惠券发放数量
@@ -55,6 +59,8 @@ public class CouponTemplate implements Serializable {
     /**
      * 创建时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
     /**
      * 创建人的ID，后台内部员工
@@ -83,10 +89,14 @@ public class CouponTemplate implements Serializable {
     /**
      * 优惠券生效日期
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
     /**
      * 优惠券失效日期
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date endTime;
     /**
      * 优惠券可以使用的金额，满减、满折等

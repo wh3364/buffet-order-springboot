@@ -54,4 +54,8 @@
         FROM user
         WHERE open_id = #{openId} AND is_enable = 1
     </select>
+
+    <select id="queryAllUserId" resultType="int">
+        SELECT user_id FROM user WHERE is_enable = 1
+    </select>
 </mapper>
