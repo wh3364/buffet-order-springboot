@@ -37,17 +37,13 @@ public class LoginInterceptor implements HandlerInterceptor {
     private RedisUtil redisUtil;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         response.setContentType("application/json;charset=UTF-8");
         String session_key = request.getHeader("session_key");
         String code = request.getHeader("code");
         if (StringUtils.hasText(session_key)) {
             String openId = openIdUtil.getOpenIdFromSession(session_key);
             if (StringUtils.hasText(openId)) {
-//                if (needReg(openId, session_key)){
-//                    response.setStatus(403);
-//                    return false;
-//                }
                 request.setAttribute("openId", openId);
                 response.setHeader("session_key", session_key);
                 log.info("通过session_key登录 session_key:{}", session_key);

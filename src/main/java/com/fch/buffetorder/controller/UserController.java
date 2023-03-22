@@ -1,9 +1,11 @@
 package com.fch.buffetorder.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fch.buffetorder.api.ResponseBean;
 import com.fch.buffetorder.entity.Address;
 import com.fch.buffetorder.entity.User;
 import com.fch.buffetorder.service.UserService;
+import com.fch.buffetorder.util.OpenIdUtil;
 import com.fch.buffetorder.util.UploadImgUtil;
 import com.fch.buffetorder.util.WeiXinParam;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +38,67 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+
+    private final OpenIdUtil openIdUtil;
+
+    @PostMapping("RegUser")
+    public ResponseBean regUser(HttpServletRequest request, HttpServletResponse response) {
+        String code = request.getHeader("code");
+        JSONObject openIdres = openIdUtil.getOpenId(code);
+        if (openIdres.getBoolean("flag") && StringUtils.hasText(openIdres.getString("openId"))) {
+            User user = new User();
+            user.setOpenId(openIdres.getString("openId"));
+            if (!userService.isExistByOpenId(user)) {
+                userService.regUser(user);
+            }
+            user.setOpenId(null);
+            log.info("注册用户{}", user);
+            response.setHeader("session_key", openIdres.getString("session_key"));
+            return ResponseBean.ok(user);
+        }
+        return ResponseBean.badRequest("坏请求");
+    }
+
+    @PostMapping("LoginUser")
+    public ResponseEntity<?> loginUser(@RequestAttribute("openId") String openId,
+                                       HttpServletResponse response) {
+        if (StringUtils.hasText(openId)) {
+            User user = new User();
+            user.setOpenId(openId);
+            String sessionKey = response.getHeader("session_key");
+            if (!StringUtils.hasText(sessionKey)) {
+                return ResponseEntity.badRequest().build();
+            }
+            user = userService.getUserByOpenId("user:" + sessionKey, user);
+            JSONObject resp = new JSONObject();
+            user.setOpenId(null);
+            resp.put("user", user);
+            log.info("登录用户{}", user);
+            return ResponseEntity.ok(resp);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    /**
+     * 根据微信更新昵称和头像
+     *
+     * @param json
+     * @return
+     */
+    @PostMapping("UploadInfo")
+    public ResponseEntity<User> uploadUserNickAvatar(@RequestBody() String json,
+                                                     @RequestAttribute("openId") String openId,
+                                                     HttpServletRequest request) {
+        JSONObject jsonObject = JSONObject.parseObject(json);
+        User user = new User();
+        user.setOpenId(openId);
+        if (!userService.isExistByOpenId(user)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        user.setNickName(jsonObject.getString("nick"));
+        user.setAvatarPath(jsonObject.getString("avatar"));
+        return userService.uploadUserNickAvatar("user:" + request.getHeader("session_key") ,user);
+    }
 
     @PostMapping("AddMoney")
     public ResponseEntity<User> addMoney(@RequestAttribute("openId") String openId,

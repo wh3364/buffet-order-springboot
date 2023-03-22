@@ -1,8 +1,6 @@
 server:
   address: localhost
   port: 8080
-  servlet:
-    context-path: /BuffetOrder
 #mybatis配置
 mybatis:
   mapper-locations: classpath:mapper/*.xml
